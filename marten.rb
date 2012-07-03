@@ -1,4 +1,6 @@
 require File.dirname(__FILE__) + '/patch'
+require File.dirname(__FILE__) + '/world'
+
 class Marten
 
  MAX_ENERGY = 3334.8
@@ -15,6 +17,10 @@ class Marten
   attr_accessor :age, :energy, :neighborhood, :previous_location, :active_hours, :target, :method #TODO: make this set previous x and y
  
   
+  def initialize
+    self.energy = 0
+    self.age = 0
+  end
 
   HABITAT_SUITABILITY = { open_water: 0,
                           developed_open_space: 0,
@@ -50,6 +56,26 @@ class Marten
   def nearby_tiles(radius = 0)
   end
 
+  def habitat_suitability_for(tiles)
+    rand(1)
+  end
+
+  def walk_forward(distance)
+
+  end
+
+  def world
+    World.new
+  end
+
+  def x
+    0
+  end
+
+  def y
+    0
+  end
+
   def forage
     #puts "FORAGE ENERGY = #{energy}"
     h = 0
@@ -74,6 +100,10 @@ class Marten
 
   def heading
     @heading
+  end
+
+  def location
+
   end
 
 

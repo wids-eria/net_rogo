@@ -10,7 +10,7 @@ end
   def go
     actual_distance = 0
     forage
-    check-death
+    check_death
     metabolize
     self.age += 1
   end
