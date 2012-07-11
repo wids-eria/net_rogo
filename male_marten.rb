@@ -10,7 +10,7 @@ class MaleMarten < Marten
   def go
     actual_distance = 0
     forage
-    check_death
+    die_if_starved
     metabolize
     self.age += 1
   end

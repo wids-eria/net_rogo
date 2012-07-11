@@ -56,6 +56,7 @@ class Marten
 
 
   def nearby_tiles(radius = 0)
+    # array?
   end
 
 
@@ -82,18 +83,21 @@ class Marten
     0
   end
 
+  def growing_season
+    80..355
+  end
 
   def forage
     h = 0
     self.active_hours = 0
     case day_of_year
-      when 80..355
+      when growing_season
         self.active_hours = 12
       else
         self.active_hours = 8
     end
     while h <= active_hours
-      force_move_distance
+      hourly_routine
       h += 1
     end
   end
@@ -103,10 +107,9 @@ class Marten
   end
 
 
-  def force_move_distance
+  def hourly_routine
     actual_dist = 0
-    maximum_distance = calculate_maximum_distance
-    while actual_dist < maximum_distance
+    while actual_dist < forage_distance
       move_one_patch
       hunty_hunt
       check_predation
@@ -120,8 +123,8 @@ class Marten
   end
 
 
-  def calculate_maximum_distance
-    1000 / 63.61
+  def forage_distance 
+    1000 / 63.62
   end
 
 
@@ -177,7 +180,7 @@ class Marten
 
   def metabolize
     case day_of_year
-      when 80..355
+      when growing_season
         self.energy -= 857 # field metabolic rate (above)
       else
         self.energy -= 227
@@ -189,7 +192,7 @@ class Marten
   end
 
 
-  def check_death
+  def die_if_starved
     if energy < 0
       die
     end
