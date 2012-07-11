@@ -14,7 +14,7 @@ class Marten
   # energy = max_energy # TODO: only during initialization
 
   # NEED TO ADD PERSISTENT VARIABLES:
-  attr_accessor :age, :energy, :neighborhood, :previous_location, :active_hours, :target, :heading
+  attr_accessor :age, :energy, :neighborhood, :previous_location, :target, :heading
 
 
   def initialize
@@ -83,19 +83,24 @@ class Marten
     0
   end
 
-  def growing_season
+  def growing_season_range
     80..355
+  end
+
+  def growing_season?
+    growing_season_range.include? day_of_year
+  end
+
+  def active_hours
+    if growing_season?
+      12
+    else
+      8
+    end
   end
 
   def forage
     h = 0
-    self.active_hours = 0
-    case day_of_year
-      when growing_season
-        self.active_hours = 12
-      else
-        self.active_hours = 8
-    end
     while h <= active_hours
       hourly_routine
       h += 1
@@ -179,11 +184,10 @@ class Marten
 
 
   def metabolize
-    case day_of_year
-      when growing_season
-        self.energy -= 857 # field metabolic rate (above)
-      else
-        self.energy -= 227
+    if growing_season?
+      self.energy -= 857 # field metabolic rate (above)
+    else
+      self.energy -= 227
     end
 
     if energy > MAX_ENERGY

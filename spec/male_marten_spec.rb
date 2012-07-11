@@ -13,9 +13,15 @@ describe MaleMarten do
   end
 
   describe "daily cycle" do
-    it "has 8 active hours in winter"
-    it "has 12 active hours in the growing season"
+    it "has 8 active hours in winter" do
+      male_marten.stub :growing_season? => false
+      male_marten.active_hours.should == 8
+    end
 
+    it "has 12 active hours in the growing season" do
+      male_marten.stub :growing_season? => true
+      male_marten.active_hours.should == 12
+    end
 
     describe "hourly routine" do
       it "forages until its full"
