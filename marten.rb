@@ -100,10 +100,8 @@ class Marten
   end
 
   def forage
-    h = 0
-    while h <= active_hours
+    active_hours.times do
       hourly_routine
-      h += 1
     end
   end
 

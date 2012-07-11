@@ -1,5 +1,9 @@
 require File.dirname(__FILE__) + '/../male_marten'
 
+RSpec.configure do |config|
+  config.mock_framework = :mocha
+end
+
 describe MaleMarten do
   let(:male_marten) {MaleMarten.new} 
   it 'ticks' do
@@ -14,13 +18,19 @@ describe MaleMarten do
 
   describe "daily cycle" do
     it "has 8 active hours in winter" do
-      male_marten.stub :growing_season? => false
+      male_marten.stubs :growing_season? => false
       male_marten.active_hours.should == 8
     end
 
     it "has 12 active hours in the growing season" do
-      male_marten.stub :growing_season? => true
+      male_marten.stubs :growing_season? => true
       male_marten.active_hours.should == 12
+    end
+
+    it "forages once for each active hour" do
+      male_marten.stubs :active_hours => 5
+      male_marten.expects(:hourly_routine).times(5)
+      male_marten.forage
     end
 
     describe "hourly routine" do
