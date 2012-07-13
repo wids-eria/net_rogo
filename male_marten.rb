@@ -16,36 +16,42 @@ class MaleMarten < Marten
   end
 
 
+  def stay_probability
+    (1 - BASE_PATCH_ENTRANCE_PROBABILITY) * (self.energy / MAX_ENERGY)
+  end
+
+
+  def should_leave?
+    stay_probability < rand
+  end
+
+
   # sex-specific sub-routines that feed into move_one_patch function 
   def move_one_patch
-    marten_turn
     target = patch_ahead 1
     neighborhood = nearby_tiles 1
 
     # check scent of patch ahead to see if it's someone else's
-    if (target.residue[:marten_id].nil? or target.residue[:marten_id]==self.id)
+    if (target.marten_id.nil? or target.marten_id == self.id)
       if habitat_suitability_for (target) == 1
         walk_forward 1
       else
-        # entrance probability a function of hunger
-        modified_patch_entrance_probability = (patch_entrance_probability * (1 - (self.energy / max-energy))) 
-        if rand < modified_patch_entrance_probability
+        if should_leave?
           walk_forward 1
         else
-          select_forage_patch 
+          select_forage_patch
           walk_forward 1
         end
       end
     else
-      modified_patch_entrance_probability = (patch_entrance_probability * (1 - (self.energy / max-energy))) 
-      if rand < modified_patch_entrance_probability
+      if should_leave?
         walk_forward 1
       end
     end
   end
 
 
-  def marten_turn
+  def face_random_direction
     # different turn methods
     # random
     turn rand(361)

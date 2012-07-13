@@ -1,4 +1,6 @@
 class Patch
+  attr_accessor :x, :y
+  attr_accessor :marten_id
   def residue
     {}
   end

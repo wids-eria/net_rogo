@@ -1,10 +1,11 @@
 require File.dirname(__FILE__) + '/patch'
+require File.dirname(__FILE__) + '/number'
 require File.dirname(__FILE__) + '/world'
 
 class Marten
 
- MAX_ENERGY = 3334.8
-  PATCH_ENTRANCE_PROBABILITY = 0.03
+  MAX_ENERGY = 3334.8
+  BASE_PATCH_ENTRANCE_PROBABILITY = 0.03
   MAX_VIEW_DISTANCE = 10 
   # approximate max energy (Kj) storage in reserves
   # body fat contains 39.7 kj/g - Buskirk and Harlow 1989
@@ -14,8 +15,13 @@ class Marten
   # energy = max_energy # TODO: only during initialization
 
   # NEED TO ADD PERSISTENT VARIABLES:
+  attr_accessor :x, :y
+  attr_accessor :world
   attr_accessor :age, :energy, :neighborhood, :previous_location, :target, :heading
 
+  def id
+    object_id
+  end
 
   def initialize
     self.energy = 0
@@ -47,41 +53,32 @@ class Marten
 
 
   def turn(degrees)
+    puts "turn"
   end
 
 
-  def patch_ahead(dist)
-    Patch.new
+  def patch_ahead(distance)
+    patch_x = Math::cos(heading.in_radians) * distance + x
+    patch_y = Math::sin(heading.in_radians) * distance + y
+    world.patch patch_x, patch_y
   end
 
 
   def nearby_tiles(radius = 0)
-    # array?
+    puts "nearby tiles"
   end
 
 
   def habitat_suitability_for(tiles)
-    rand(1)
+    1
   end
 
 
   def walk_forward(distance)
+    self.x = Math::cos(heading.in_radians) * distance + x
+    self.y = Math::sin(heading.in_radians) * distance + y
   end
 
-
-  def world
-    World.new
-  end
-
-
-  def x
-    0
-  end
-
-
-  def y
-    0
-  end
 
   def growing_season_range
     80..355
@@ -109,20 +106,40 @@ class Marten
   def location
   end
 
+  def location=(coordinates)
+    self.x = coordinates[0]
+    self.y = coordinates[1]
+  end
+
+  def patch
+    world.patch(self.x, self.y)
+  end
+
+  def satiated?
+    energy >= (MAX_ENERGY * 1.5)
+  end
+
 
   def hourly_routine
     actual_dist = 0
     while actual_dist < forage_distance
-      move_one_patch
-      hunty_hunt
-      check_predation
-      set_previous_location
       actual_dist += 1
-      if energy > MAX_ENERGY * 1.5
+
+      if satiated?
         set energy MAX_ENERGY
         break #TODO: make sure this is doing what I think it's doing
       end
+
+      do_stuff
     end
+  end
+
+  def do_stuff
+    face_random_direction
+    move_one_patch
+    hunty_hunt
+    check_predation
+    set_previous_location
   end
 
 
