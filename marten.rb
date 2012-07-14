@@ -48,12 +48,12 @@ class Marten
 
 
   def day_of_year
-    1
+    raise 'day of year'
   end
 
 
   def turn(degrees)
-    puts "turn"
+    raise 'turn'
   end
 
 
@@ -127,8 +127,9 @@ class Marten
       actual_dist += 1
 
       if satiated?
+        # TODO test me
         set energy MAX_ENERGY
-        break #TODO: make sure this is doing what I think it's doing
+        break
       end
 
       do_stuff
@@ -215,6 +216,7 @@ class Marten
 
 
   def set_previous_location
+    # TODO test me
     previous_location = location
   end
 end
