@@ -17,7 +17,7 @@ class Marten
   # NEED TO ADD PERSISTENT VARIABLES:
   attr_accessor :x, :y
   attr_accessor :world
-  attr_accessor :age, :energy, :neighborhood, :previous_location, :target, :heading
+  attr_accessor :age, :energy, :previous_location, :heading
 
   def id
     object_id
@@ -64,13 +64,13 @@ class Marten
   end
 
 
-  def nearby_tiles(radius = 0)
-    puts "nearby tiles"
+  def patches_in_radius radius = 0
+    world.patches_in_radius x, y, radius
   end
 
 
-  def habitat_suitability_for(tiles)
-    1
+  def habitat_suitability_for(patch)
+    HABITAT_SUITABILITY[patch.land_cover_class]
   end
 
 
@@ -104,6 +104,7 @@ class Marten
 
 
   def location
+    [self.x, self.y]
   end
 
   def location=(coordinates)
@@ -137,30 +138,25 @@ class Marten
   def do_stuff
     face_random_direction
     move_one_patch
-    hunty_hunt
+    hunt
     check_predation
     set_previous_location
   end
 
 
-  def forage_distance 
+  def forage_distance
     1000 / 63.62
   end
 
 
   def select_forage_patch
-    set_neighborhood
+    set_neighborhood # returneth
     if self.neighborhood.empty?
       self.target = previous_location
     else
       self.target = self.neighborhood.shuffle.max_by(&:max_vole_pop)
     end
     face self.target
-  end
-
-
-  def hunty_hunt
-    hunt
   end
 
 

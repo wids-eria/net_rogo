@@ -25,28 +25,33 @@ class MaleMarten < Marten
     stay_probability < rand
   end
 
+  def not_taken_by_other_marten? target
+    target.marten_id.nil? || target.marten_id == self.id
+  end
+
 
   # sex-specific sub-routines that feed into move_one_patch function 
   def move_one_patch
     target = patch_ahead 1
-    neighborhood = nearby_tiles 1
 
-    # check scent of patch ahead to see if it's someone else's
-    if (target.marten_id.nil? or target.marten_id == self.id)
-      if habitat_suitability_for (target) == 1
-        walk_forward 1
-      else
-        if should_leave?
-          walk_forward 1
-        else
-          select_forage_patch
-          walk_forward 1
-        end
-      end
+    if patch_desirable? target
+      walk_forward 1
     else
-      if should_leave?
-        walk_forward 1
-      end
+      force_enter_target_or_random_suitable_or_aboutface
+    end
+  end
+
+  # TODO reduce walk forward to 1?
+  # select forage patch unless desireable or should go..
+  # then walk forward 1
+
+
+  def force_enter_target_or_random_suitable_or_aboutface
+    if should_leave?
+      walk_forward 1
+    else
+      select_forage_patch # face random suitable or about face
+      walk_forward 1
     end
   end
 
@@ -62,9 +67,11 @@ class MaleMarten < Marten
   end
 
 
-  def set_neighborhood
-    # determine surrounding tiles that are "suitable"
-    neighborhood = nearby_tiles.select {tile.residue[:marten_id].nil? or tile.residue[:marten_id]==self.id}
-    neighborhood = habitat_suitability_for (neighborhood) == 1 #TODO: have to check approach to selecting 'suitable' tiles in neighborhood
+  def desireable_patches
+    patches_in_radius(1).select{|patch| patch_desirable? patch }
+  end
+
+  def patch_desirable?(patch)
+    not_taken_by_other_marten?(patch) && habitat_suitability_for(patch) == 1
   end
 end
