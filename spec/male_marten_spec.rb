@@ -1,9 +1,5 @@
 require File.dirname(__FILE__) + '/../male_marten'
 
-RSpec.configure do |config|
-  config.mock_framework = :mocha
-end
-
 describe MaleMarten do
   let!(:world) { World.new width: 3, height: 3 }
   let(:male_marten) { MaleMarten.new }
