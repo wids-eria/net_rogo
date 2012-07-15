@@ -169,7 +169,7 @@ class Marten
     if patches.empty?
       face_location previous_location # FIXME centroid of patch? or exact location?
     else
-      face_patch self.patches.shuffle.max_by(&:max_vole_pop) # NOTE centroid?
+      face_patch patches.shuffle.max_by(&:max_vole_pop) # NOTE centroid?
     end
   end
 

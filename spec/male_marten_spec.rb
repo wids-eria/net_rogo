@@ -143,19 +143,20 @@ describe MaleMarten do
     describe "hourly routine" do
       describe "moving" do
         context "when facing a suitable patch" do
+          let (:desired_patch) { world.patch(0, 1) }
+
           before do
             male_marten.heading = 180.degrees
             male_marten.location = [1.5, 1.5]
             male_marten.energy = 1000000
-            @desired_patch = world.patch(0, 1)
-            @desired_patch.land_cover_class = :deciduous
-            @desired_patch.marten_id = nil
+            desired_patch.land_cover_class = :deciduous
+            desired_patch.marten_id = nil
           end
 
           context "that is unscented" do
-            it "goes to that patch because of his starting coordinates" do
+            it "moves one unit of distance and lands on the patch" do
               male_marten.move_one_patch
-              male_marten.patch.should == @desired_patch
+              male_marten.patch.should == desired_patch
             end
           end
         end
@@ -170,14 +171,22 @@ describe MaleMarten do
           end
 
           it 'backtracks if no suitable patches' do
+            male_marten.stubs desireable_patches: []
             male_marten.select_forage_patch
             male_marten.heading.should == 225.degrees
-            raise 'set up patches'
           end
 
           it 'goes to the tile with the largest vole population' do
+            patch1 = world.patch(2,2)
+            patch1.max_vole_pop = 50.0
+
+            patch2 = world.patch(2,0)
+            patch2.max_vole_pop = 20.0
+
+            male_marten.stubs desireable_patches: [patch2, patch1]
+
             male_marten.select_forage_patch
-            raise 'set up patches'
+            male_marten.heading.should == 45.degrees
           end
         end
       end

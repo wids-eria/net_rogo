@@ -3,6 +3,8 @@ class Patch
   attr_accessor :marten_id
   attr_accessor :land_cover_class
 
+  attr_accessor :max_vole_pop
+
   def residue
     {}
   end
