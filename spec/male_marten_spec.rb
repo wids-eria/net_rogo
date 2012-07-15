@@ -128,7 +128,13 @@ describe MaleMarten do
             end
           end
         end
-        it 'backtracks with select forage patch'
+        it 'backtracks with select forage patch if no suitable tiles' do
+          male_marten.select_forage_patch
+        end
+
+        it 'goes to the tile with the largest vole population' do
+          male_marten.select_forage_patch
+        end
       end
 
       describe "hunting" do

@@ -5,7 +5,6 @@ class MaleMarten < Marten
     go
   end
 
-  TURN_SD = 90
 
   def go
     actual_distance = 0
@@ -58,10 +57,13 @@ class MaleMarten < Marten
 
   def face_random_direction
     # different turn methods
+
     # random
-    turn rand(361)
+    turn rand(361).degrees
+
     #  correlated +
     #  turn self.normal_dist 0 self.turn_sd
+
     # correlated -
     #  turn self.normal_dist 180 self.turn_sd
   end

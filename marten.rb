@@ -26,6 +26,8 @@ class Marten
   def initialize
     self.energy = 0
     self.age = 0
+    self.location = [0.0, 0.0]
+    self.heading = 0.0
   end
 
   HABITAT_SUITABILITY = { open_water: 0,
@@ -48,12 +50,13 @@ class Marten
 
 
   def day_of_year
-    raise 'day of year'
+    world.day_of_year
   end
 
 
   def turn(degrees)
-    raise 'turn'
+    self.heading += degrees
+    self.heading %= 360
   end
 
 
@@ -151,13 +154,12 @@ class Marten
 
 
   def select_forage_patch
-    set_neighborhood # returneth
-    if self.neighborhood.empty?
-      self.target = previous_location
+    patches = desireable_patches
+    if patches.empty?
+      face previous_location
     else
-      self.target = self.neighborhood.shuffle.max_by(&:max_vole_pop)
+      face self.patches.shuffle.max_by(&:max_vole_pop)
     end
-    face self.target
   end
 
 
