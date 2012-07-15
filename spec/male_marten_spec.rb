@@ -55,33 +55,33 @@ describe MaleMarten do
     end
   end
 
-  describe '#face' do
+  describe '#face_patch' do
     before do
       male_marten.location = [1.5, 1.5]
     end
 
     it 'faces lower left patch' do
-      male_marten.face world.patch(0,0)
+      male_marten.face_patch world.patch(0,0)
       male_marten.heading.should == 225.0
     end
 
     it 'faces lower middle patch' do
-      male_marten.face world.patch(1,0)
+      male_marten.face_patch world.patch(1,0)
       male_marten.heading.should == 270.0
     end
 
     it 'faces upper left patch' do
-      male_marten.face world.patch(0,2)
+      male_marten.face_patch world.patch(0,2)
       male_marten.heading.should == 135.0
     end
 
     it 'faces middle left patch' do
-      male_marten.face world.patch(0,1)
+      male_marten.face_patch world.patch(0,1)
       male_marten.heading.should == 180.0
     end
 
     it 'faces upper right patch' do
-      male_marten.face world.patch(2,2)
+      male_marten.face_patch world.patch(2,2)
       male_marten.heading.should == 45.0
     end
   end
@@ -162,14 +162,23 @@ describe MaleMarten do
 
         # NOTE make sure previous location gets set on first placement (ie to
         # avoid facing 0,0 or something weird
-        it 'backtracks with select forage patch if no suitable tiles' do
-          male_marten.select_forage_patch
-          raise 'set up patches'
-        end
+        context 'when selecting a forage patch' do
+          before do
+            male_marten.location = [1.5, 1.5]
+            male_marten.previous_location = [0.5, 0.5]
+            male_marten.heading = 45.degrees
+          end
 
-        it 'goes to the tile with the largest vole population' do
-          male_marten.select_forage_patch
-          raise 'set up patches'
+          it 'backtracks if no suitable patches' do
+            male_marten.select_forage_patch
+            male_marten.heading.should == 225.degrees
+            raise 'set up patches'
+          end
+
+          it 'goes to the tile with the largest vole population' do
+            male_marten.select_forage_patch
+            raise 'set up patches'
+          end
         end
       end
 

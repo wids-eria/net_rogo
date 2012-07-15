@@ -60,9 +60,13 @@ class Marten
   end
 
 
-  def face(patch)
-    delta_x = patch.x - x + 0.5
-    delta_y = patch.y - y + 0.5
+  def face_patch(patch)
+    face_location [patch.center_x, patch.center_y]
+  end
+
+  def face_location(coordinates)
+    delta_x = coordinates[0] - self.x
+    delta_y = coordinates[1] - self.y
     self.heading = Math::atan2(delta_y, delta_x).in_degrees % 360
   end
 
@@ -163,9 +167,9 @@ class Marten
   def select_forage_patch
     patches = desireable_patches
     if patches.empty?
-      face previous_location
+      face_location previous_location # FIXME centroid of patch? or exact location?
     else
-      face self.patches.shuffle.max_by(&:max_vole_pop)
+      face_patch self.patches.shuffle.max_by(&:max_vole_pop) # NOTE centroid?
     end
   end
 
