@@ -60,6 +60,13 @@ class Marten
   end
 
 
+  def face(patch)
+    delta_x = patch.x - x + 0.5
+    delta_y = patch.y - y + 0.5
+    self.heading = Math::atan2(delta_y, delta_x).in_degrees % 360
+  end
+
+
   def patch_ahead(distance)
     patch_x = Math::cos(heading.in_radians) * distance + x
     patch_y = Math::sin(heading.in_radians) * distance + y
