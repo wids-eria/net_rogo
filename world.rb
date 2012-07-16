@@ -9,7 +9,7 @@ class World
     self.current_date = Date.new
     self.martens = []
 
-    self.patches = {}
+    self.patches = Array.new height*width
 
     width.times do |x|
       height.times do |y|
@@ -23,11 +23,12 @@ class World
   end
 
   def all_patches
-    patches.values
+    patches
   end
 
   def tick
     martens.each(&:tick)
+    all_patches.each(&:age_and_expire_scents)
     self.current_date += 1.day
   end
 
@@ -40,7 +41,7 @@ class World
   end
 
   def patch_key(x,y)
-    "#{x.floor}-#{y.floor}"
+    self.width*y.floor + x.floor
   end
 
   def patches_in_radius(center_x, center_y, radius)

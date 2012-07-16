@@ -197,6 +197,7 @@ class Marten
   def do_stuff
     face_random_direction
     move_one_patch
+    leave_scent_mark
     hunt
     check_predation
     remember_previous_location

@@ -1,6 +1,6 @@
 class Patch
   attr_accessor :x, :y
-  attr_accessor :marten_id
+  attr_accessor :marten_id, :marten_scent_age
   attr_accessor :land_cover_class
 
   attr_accessor :max_vole_pop
@@ -24,5 +24,14 @@ class Patch
 
   def center_y
     self.y + 0.5
+  end
+
+  def age_and_expire_scents
+    return if self.marten_scent_age.nil?
+    self.marten_scent_age += 1
+    if marten_scent_age >= 14
+      self.marten_scent_age = nil
+      self.marten_id = nil
+    end
   end
 end

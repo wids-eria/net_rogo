@@ -31,6 +31,12 @@ class MaleMarten < Marten
   end
 
 
+  def leave_scent_mark
+    self.patch.marten_id = self
+    self.patch.marten_scent_age = 0
+  end
+
+
   # sex-specific sub-routines that feed into move_one_patch function 
   def move_one_patch
     target = patch_ahead 1

@@ -1,8 +1,8 @@
 require File.dirname(__FILE__) + '/../male_marten'
 
 describe MaleMarten do
-  let!(:world) { World.new width: 30, height: 30 }
-  let!(:martens) { MaleMarten.spawn_population world, 100 }
+  let!(:world) { World.new width: 3, height: 3 }
+  let!(:martens) { MaleMarten.spawn_population world, 10 }
   let!(:male_marten) { martens.first }
 
   before do
