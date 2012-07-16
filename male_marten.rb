@@ -13,6 +13,7 @@ class MaleMarten < Marten
     die_if_starved
     metabolize
     self.age += 1
+    die if age > (18 * 365)
   end
 
 
@@ -62,5 +63,9 @@ class MaleMarten < Marten
 
   def patch_desirable?(patch)
     not_taken_by_other_marten?(patch) && habitat_suitability_for(patch) == 1
+  end
+
+  def self.can_spawn_on?(patch)
+    self.passable?(patch) && self.habitat_suitability_for(patch) == 1
   end
 end

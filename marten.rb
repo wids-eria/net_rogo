@@ -31,7 +31,18 @@ class Marten
     self.heading = 0.0
   end
 
+
+  def self.spawn_population(world, count = 100)
+    patches_for_spawning = world.all_patches.select{|patch| can_spawn_on? patch}
+    raise 'wat' if patches_for_spawning.empty?
+    count.times.collect do
+      patch = patches_for_spawning.sample
+      spawn_at world, patch.center_x, patch.center_y
+    end
+  end
+
   def self.spawn_at(world,x,y)
+
     marten = self.new
     marten.location = [x,y]
     marten.previous_location = [x,y]
@@ -102,14 +113,23 @@ class Marten
 
   # psst, 'netlogo' neighborhood.. patch center x/y
 
-  def habitat_suitability_for(patch)
+  def self.habitat_suitability_for(patch)
     HABITAT_SUITABILITY[patch.land_cover_class]
   end
 
-  def passable?(patch)
+  def habitat_suitability_for(patch)
+    self.class.habitat_suitability_for patch
+  end
+
+  def self.passable?(patch)
     !patch.nil?
   end
 
+  def passable?(patch)
+    self.class.passable? patch
+  end
+
+  
 
   def walk_forward(distance)
     raise 'no previous location' if previous_location.nil?
@@ -166,7 +186,7 @@ class Marten
 
       if satiated?
         # TODO test me
-        set energy MAX_ENERGY
+        self.energy = MAX_ENERGY
         break
       end
 

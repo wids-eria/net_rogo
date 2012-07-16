@@ -6,10 +6,12 @@ class Patch
   attr_accessor :max_vole_pop
   attr_accessor :vole_population
 
+  MAX_VOLE_POP = 13.9
+
   def initialize
     self.land_cover_class = :barren
     self.vole_population = 0
-    self.max_vole_pop = 0
+    self.max_vole_pop = MAX_VOLE_POP
   end
 
   def location

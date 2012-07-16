@@ -14,10 +14,16 @@ class World
     width.times do |x|
       height.times do |y|
         patch = Patch.new
+        patch.land_cover_class = :deciduous
+        patch.vole_population = patch.max_vole_pop
         patch.x, patch.y = x, y
         patches[patch_key(x,y)] = patch
       end
     end
+  end
+
+  def all_patches
+    patches.values
   end
 
   def tick
