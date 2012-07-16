@@ -35,7 +35,10 @@ class Marten
     marten = self.new
     marten.location = [x,y]
     marten.previous_location = [x,y]
+
     marten.world = world
+    world.martens << marten
+
     marten.energy = MAX_ENERGY
     marten.spawned = true
     marten
@@ -256,7 +259,7 @@ class Marten
 
 
   def die
-    raise 'die me'
+    world.martens.delete self
   end
 
 

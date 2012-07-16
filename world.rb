@@ -1,12 +1,13 @@
 require 'date'
 
 class World
-  attr_accessor :height, :width, :patches, :current_date
+  attr_accessor :height, :width, :patches, :martens, :current_date
 
   def initialize(options = {})
     self.height = options[:height]
     self.width = options[:width]
     self.current_date = Date.new
+    self.martens = []
 
     self.patches = {}
 
@@ -17,6 +18,11 @@ class World
         patches[patch_key(x,y)] = patch
       end
     end
+  end
+
+  def tick
+    martens.each(&:tick)
+    self.current_date += 1.day
   end
 
   def day_of_year

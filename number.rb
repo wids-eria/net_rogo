@@ -1,4 +1,8 @@
 class Numeric
+  def day
+    self
+  end
+
   def degrees
     self
   end

@@ -2,14 +2,14 @@ require File.dirname(__FILE__) + '/../male_marten'
 
 describe MaleMarten do
   let!(:world) { World.new width: 3, height: 3 }
-  let(:male_marten) { MaleMarten.spawn_at world, 1.5, 1.5 }
+  let!(:male_marten) { MaleMarten.spawn_at world, 1.5, 1.5 }
 
   it 'ticks' do
     male_marten.tick
   end
 
   it 'does 1000 ticks' do
-    1000.times{ male_marten.tick }
+    1000.times{ puts world.martens.count if world.martens.count > 0; world.tick }
   end
 
   it 'ticks with a randomized world'
@@ -168,14 +168,6 @@ describe MaleMarten do
           end
         end
 
-        context 'when facing no patch at all (corner of earth?)' do
-          it 'does stuff' do
-            raise 'how to handle this'
-          end
-        end
-
-        # NOTE make sure previous location gets set on first placement (ie to
-        # avoid facing 0,0 or something weird
         context 'when selecting a forage patch' do
           before do
             male_marten.location = [1.5, 1.5]
