@@ -13,4 +13,6 @@ describe Patch do
   it 'returns center_y from its coordinates' do
     patch.center_y.should == 2.5
   end
+
+  it 'has a max population'
 end

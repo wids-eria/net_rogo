@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/marten'
 class MaleMarten < Marten
 
   def tick
+    raise 'spawn me' if spawned?
     go
   end
 
@@ -33,24 +34,10 @@ class MaleMarten < Marten
   def move_one_patch
     target = patch_ahead 1
 
-    if patch_desirable? target
+    if patch_desirable?(target) || should_leave?
       walk_forward 1
     else
-      force_enter_target_or_random_suitable_or_aboutface
-    end
-  end
-
-  # TODO reduce walk forward to 1?
-  # select forage patch unless desireable or should go..
-  # then walk forward 1
-
-
-  def force_enter_target_or_random_suitable_or_aboutface
-    if should_leave?
-      walk_forward 1
-    else
-      select_forage_patch # face random suitable or about face
-      walk_forward 1
+      select_forage_patch_and_move
     end
   end
 
@@ -70,7 +57,7 @@ class MaleMarten < Marten
 
 
   def desireable_patches
-    patches_in_radius(1).select{|patch| patch_desirable? patch }
+    neighborhood_in_radius(1).select{|patch| patch_desirable? patch }
   end
 
   def patch_desirable?(patch)

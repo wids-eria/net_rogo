@@ -17,17 +17,32 @@ class Marten
   # NEED TO ADD PERSISTENT VARIABLES:
   attr_accessor :x, :y
   attr_accessor :world
-  attr_accessor :age, :energy, :previous_location, :heading
+  attr_accessor :age, :energy, :previous_location, :heading, :spawned
 
   def id
     object_id
   end
 
   def initialize
+    self.spawned = false
     self.energy = 0
     self.age = 0
     self.location = [0.0, 0.0]
     self.heading = 0.0
+  end
+
+  def self.spawn_at(world,x,y)
+    marten = self.new
+    marten.location = [x,y]
+    marten.previous_location = [x,y]
+    marten.world = world
+    marten.energy = MAX_ENERGY
+    marten.spawned = true
+    marten
+  end
+
+  def spawned?
+    spawned.nil? || !spawned
   end
 
   HABITAT_SUITABILITY = { open_water: 0,
@@ -78,10 +93,11 @@ class Marten
   end
 
 
-  def patches_in_radius radius = 0
-    world.patches_in_radius x, y, radius
+  def neighborhood_in_radius radius = 0
+    world.patches_in_radius(x, y, radius) - [self.patch]
   end
 
+  # psst, 'netlogo' neighborhood.. patch center x/y
 
   def habitat_suitability_for(patch)
     HABITAT_SUITABILITY[patch.land_cover_class]
@@ -89,6 +105,7 @@ class Marten
 
 
   def walk_forward(distance)
+    raise 'no previous location' if previous_location.nil?
     self.x = Math::cos(heading.in_radians) * distance + x
     self.y = Math::sin(heading.in_radians) * distance + y
   end
@@ -155,7 +172,7 @@ class Marten
     move_one_patch
     hunt
     check_predation
-    set_previous_location
+    remember_previous_location
   end
 
 
@@ -164,12 +181,15 @@ class Marten
   end
 
 
-  def select_forage_patch
+  def select_forage_patch_and_move
     patches = desireable_patches
     if patches.empty?
-      face_location previous_location # FIXME centroid of patch? or exact location?
+      # if prev loc == current location
+      face_location self.previous_location # FIXME centroid of patch? or exact location?
+      walk_forward 1
     else
-      face_patch patches.shuffle.max_by(&:max_vole_pop) # NOTE centroid?
+      face_patch patches.shuffle.max_by(&:max_vole_pop)
+      walk_forward 1
     end
   end
 
@@ -181,22 +201,24 @@ class Marten
     # modify p_kill based on vole population
 #            begin
     p_kill = 0.076356
-    tile_here = self.world.resource_tile_at self.x, self.y 
-    if tile_here.population[:vole_population] < 1 #TODO need to access "tile_here" data
+    tile_here = self.patch
+
+    if tile_here.vole_population < 1
       p_kill = 0
     else
       # discount p_kill based on proportion of vole capacity in patch
-      p_kill = (p_kill * (tile_here.population[:vole_population] / tile_here.max_vole_pop))
+      p_kill = (p_kill * (tile_here.vole_population / tile_here.max_vole_pop))
     end
+
     if rand > (1 - p_kill)
       self.energy += 140
-      tile_here.population[:vole_population] = (tile_here.population[:vole_population] - 1)
+      tile_here.vole_population =- 1
     end
   end
 
 
   def check_predation
-    if habitat_suitability_for (self.world.resource_tile_at self.x, self.y) == 1 #TODO: double check this arg
+    if habitat_suitability_for(self.patch) == 1
       p_mort = Math.exp(Math.log(0.99897) / self.active_hours) # based on daily predation rates decomposed to hourly rates (from Thompson and Colgan (1994))
     else
       p_mort = Math.exp(Math.log(0.99555) / self.active_hours)
@@ -228,8 +250,12 @@ class Marten
   end
 
 
-  def set_previous_location
-    # TODO test me
-    previous_location = location
+  def die
+    raise 'die me'
+  end
+
+
+  def remember_previous_location
+    self.previous_location = location
   end
 end

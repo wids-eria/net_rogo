@@ -2,15 +2,19 @@ require File.dirname(__FILE__) + '/../male_marten'
 
 describe MaleMarten do
   let!(:world) { World.new width: 3, height: 3 }
-  let(:male_marten) { MaleMarten.new }
-
-  before do
-    male_marten.world = world
-  end
+  let(:male_marten) { MaleMarten.spawn_at world, 1.5, 1.5 }
 
   it 'ticks' do
-   male_marten.tick
+    male_marten.tick
   end
+
+  it 'does 1000 ticks' do
+    1000.times{ male_marten.tick }
+  end
+
+  it 'ticks with a randomized world'
+  it 'ticks with a half n half world'
+  it 'can only spawn at a desirable location'
 
   describe '#location' do
     it 'returns x and y' do
@@ -56,10 +60,6 @@ describe MaleMarten do
   end
 
   describe '#face_patch' do
-    before do
-      male_marten.location = [1.5, 1.5]
-    end
-
     it 'faces lower left patch' do
       male_marten.face_patch world.patch(0,0)
       male_marten.heading.should == 225.0
@@ -103,23 +103,30 @@ describe MaleMarten do
   describe '#patches_in_radius' do
     it 'returns neighborhood of 1 from center of patch' do
       male_marten.location = [1.5, 1.5]
-      male_marten.patches_in_radius(1).collect(&:location).to_set.should == [[0,2],[1,2],[2,2],
-                                                                             [0,1],[1,1],[2,1],
+      male_marten.neighborhood_in_radius(1).collect(&:location).to_set.should == [[0,2],[1,2],[2,2],
+                                                                             [0,1],      [2,1],
                                                                              [0,0],[1,0],[2,0]].to_set
     end
 
     it 'returns neighborhood of 1 from corner of patch' do
       male_marten.location = [1.9, 1.9]
-      male_marten.patches_in_radius(1).collect(&:location).to_set.should == [[0,2],[1,2],[2,2],
-                                                                             [0,1],[1,1],[2,1],
+      male_marten.neighborhood_in_radius(1).collect(&:location).to_set.should == [[0,2],[1,2],[2,2],
+                                                                             [0,1],      [2,1],
                                                                                    [1,0],[2,0]].to_set
     end
 
     it 'returns neighborhood of 1 from corner of world' do
-      male_marten.location = [0.0, 0.0]
-      male_marten.patches_in_radius(1).collect(&:location).to_set.should == [
+      male_marten.location = [0.1, 0.1]
+      male_marten.neighborhood_in_radius(1).collect(&:location).to_set.should == [
+                                                                             [0,1],
+                                                                                   [1,0]      ].to_set
+    end
 
-                                                                             [0,0]            ].to_set
+    it 'returns neighborhood of 1 from corner of world' do
+      male_marten.location = [0.0, 0.0]
+      male_marten.neighborhood_in_radius(1).collect(&:location).to_set.should == [
+
+                                                                                              ].to_set
     end
   end
 
@@ -158,6 +165,12 @@ describe MaleMarten do
               male_marten.move_one_patch
               male_marten.patch.should == desired_patch
             end
+          end
+        end
+
+        context 'when facing no patch at all (corner of earth?)' do
+          it 'does stuff' do
+            raise 'how to handle this'
           end
         end
 
@@ -209,8 +222,17 @@ describe MaleMarten do
     it "uses more energy in the growing season"
   end
 
+
+
   describe "stuffy stuff" do
     it "keeps heading within 2PI or 360"
     it "increases heading if turning right"
+    it 'it handled unpassible (or non existant) patches'
+  end
+
+  describe 'random trial' do
+    it 'runs random ticks a bunch' do
+      raise 'make me work'
+    end
   end
 end

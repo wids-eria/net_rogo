@@ -4,9 +4,12 @@ class Patch
   attr_accessor :land_cover_class
 
   attr_accessor :max_vole_pop
+  attr_accessor :vole_population
 
-  def residue
-    {}
+  def initialize
+    self.land_cover_class = :barren
+    self.vole_population = 0
+    self.max_vole_pop = 0
   end
 
   def location
@@ -19,10 +22,5 @@ class Patch
 
   def center_y
     self.y + 0.5
-  end
-
-
-  def population
-    {vole_population: 0}
   end
 end
