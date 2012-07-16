@@ -184,9 +184,10 @@ class Marten
   def select_forage_patch_and_move
     patches = desireable_patches
     if patches.empty?
-      # if prev loc == current location
-      face_location self.previous_location # FIXME centroid of patch? or exact location?
-      walk_forward 1
+      unless self.previous_location == location
+        face_location self.previous_location # FIXME centroid of patch? or exact location?
+        walk_forward 1
+      end
     else
       face_patch patches.shuffle.max_by(&:max_vole_pop)
       walk_forward 1

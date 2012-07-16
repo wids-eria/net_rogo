@@ -185,7 +185,7 @@ describe MaleMarten do
 
           it 'backtracks if no suitable patches' do
             male_marten.stubs desireable_patches: []
-            male_marten.select_forage_patch
+            male_marten.select_forage_patch_and_move
             male_marten.heading.should == 225.degrees
           end
 
@@ -198,8 +198,15 @@ describe MaleMarten do
 
             male_marten.stubs desireable_patches: [patch2, patch1]
 
-            male_marten.select_forage_patch
+            male_marten.select_forage_patch_and_move
             male_marten.heading.should == 45.degrees
+          end
+
+          it 'does nothing if no suitable tiles and previous location is current location' do
+            male_marten.stubs desireable_patches: []
+            male_marten.location = male_marten.previous_location = [1.5, 1.5]
+
+            male_marten.select_forage_patch_and_move
           end
         end
       end
