@@ -34,7 +34,7 @@ class MaleMarten < Marten
   def move_one_patch
     target = patch_ahead 1
 
-    if patch_desirable?(target) || should_leave?
+    if passable?(target) && (patch_desirable?(target) || should_leave?)
       walk_forward 1
     else
       select_forage_patch_and_move

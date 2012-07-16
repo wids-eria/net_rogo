@@ -103,6 +103,10 @@ class Marten
     HABITAT_SUITABILITY[patch.land_cover_class]
   end
 
+  def passable?(patch)
+    !patch.nil?
+  end
+
 
   def walk_forward(distance)
     raise 'no previous location' if previous_location.nil?
