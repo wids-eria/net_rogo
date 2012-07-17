@@ -111,6 +111,19 @@ class Marten
     world.patches_in_radius(x, y, radius) - [self.patch]
   end
 
+  def neighborhood
+    x = self.x.floor
+    y = self.y.floor
+    [ world.patch(x-1,y-1),
+      world.patch(x-1,y),
+      world.patch(x-1,y+1),
+      world.patch(x,y-1),
+      world.patch(x,y+1),
+      world.patch(x+1,y-1),
+      world.patch(x+1,y),
+      world.patch(x+1,y+1) ].compact
+  end
+
   # psst, 'netlogo' neighborhood.. patch center x/y
 
   def self.habitat_suitability_for(patch)

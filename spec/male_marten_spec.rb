@@ -1,9 +1,9 @@
 require File.dirname(__FILE__) + '/../male_marten'
 
 describe MaleMarten do
-  let!(:world) { World.new width: 3, height: 3 }
-  let!(:martens) { MaleMarten.spawn_population world, 10 }
-  let!(:male_marten) { martens.first }
+  let!(:world) { World.new width: 30, height: 30 }
+  let(:martens) { MaleMarten.spawn_population world, 100 }
+  let(:male_marten) { martens.first }
 
   before do
     male_marten.location = [1.5, 1.5]
@@ -14,6 +14,7 @@ describe MaleMarten do
   end
 
   it 'does 1000 ticks' do
+    male_marten
     10000.times{ puts world.martens.count if world.martens.count > 0; world.tick }
   end
 

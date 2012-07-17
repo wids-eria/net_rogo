@@ -3,6 +3,7 @@ class MaleMarten < Marten
 
   def tick
     raise 'spawn me' if spawned?
+    print ','
     go
   end
 
@@ -64,7 +65,8 @@ class MaleMarten < Marten
 
 
   def desireable_patches
-    neighborhood_in_radius(1).select{|patch| patch_desirable? patch }
+    #neighborhood_in_radius(1).select{|patch| patch_desirable? patch }
+    neighborhood.select{|patch| patch_desirable? patch }
   end
 
   def patch_desirable?(patch)

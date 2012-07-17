@@ -9,7 +9,7 @@ class World
     self.current_date = Date.new
     self.martens = []
 
-    self.patches = Array.new height*width
+    self.patches = Array.new(width) { Array.new(height) }
 
     width.times do |x|
       height.times do |y|
@@ -17,13 +17,13 @@ class World
         patch.land_cover_class = :deciduous
         patch.vole_population = patch.max_vole_pop
         patch.x, patch.y = x, y
-        patches[patch_key(x,y)] = patch
+        set_patch(x, y, patch)
       end
     end
   end
 
   def all_patches
-    patches
+    patches.flatten
   end
 
   def tick
@@ -36,18 +36,20 @@ class World
     current_date.yday
   end
 
-  def patch(x,y)
-    patches[patch_key(x,y)]
+  def set_patch(x,y, patch)
+    patches[x.to_i][y.to_i] = patch
   end
 
-  def patch_key(x,y)
-    self.width*y.floor + x.floor
+  def patch(x,y)
+    return nil if y >= height || y < 0 || x >= width || x < 0
+    patches[x.to_i][y.to_i]
   end
+
 
   def patches_in_radius(center_x, center_y, radius)
     patch_list = []
-    width.times do |patch_x|
-      height.times do |patch_y|
+    (((center_x-radius).floor)..((center_x+radius).ceil)).each do |patch_x|
+      (((center_y-radius).floor)..((center_y+radius).ceil)).each do |patch_y|
         patch = patch(patch_x,patch_y)
         patch_list << patch if tile_in_range?(patch_x, patch_y, center_x, center_y, radius)
       end
