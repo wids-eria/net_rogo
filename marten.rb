@@ -223,7 +223,7 @@ class Marten
 
 
   def select_forage_patch_and_move
-    patches = desireable_patches
+    patches = desirable_patches
     if patches.empty?
       unless self.previous_location == location
         face_location self.previous_location # FIXME centroid of patch? or exact location?

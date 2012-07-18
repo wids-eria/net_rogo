@@ -66,9 +66,9 @@ class MaleMarten < Marten
   end
 
 
-  def desireable_patches
-    #neighborhood_in_radius(1).select{|patch| patch_desirable? patch }
-    neighborhood.select{|patch| patch_desirable? patch }
+  def desirable_patches
+    neighborhood_in_radius(1).select{|patch| patch_desirable? patch }
+    #neighborhood.select{|patch| patch_desirable? patch }
   end
 
   def patch_desirable?(patch)
