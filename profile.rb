@@ -4,10 +4,10 @@ require File.dirname(__FILE__) + '/male_marten'
 # Profile the code
 
 puts 'world'
-world = World.new width: 3000, height: 3000
+world = World.new width: 1351, height: 712
 
 puts 'spawning'
-martens = MaleMarten.spawn_population world, 1000
+martens = MaleMarten.spawn_population world, 100
 
 RubyProf.start
 

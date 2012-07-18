@@ -3,7 +3,6 @@ class MaleMarten < Marten
 
   def tick
     raise 'spawn me' if spawned?
-    print ','
     go
   end
 
@@ -14,7 +13,10 @@ class MaleMarten < Marten
     die_if_starved
     metabolize
     self.age += 1
-    die if age > (18 * 365)
+    if age > (18 * 365)
+      print 'wat'
+      die
+    end
   end
 
 

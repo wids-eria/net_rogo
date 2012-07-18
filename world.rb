@@ -28,7 +28,7 @@ class World
 
   def tick
     martens.each(&:tick)
-    all_patches.each(&:age_and_expire_scents)
+    all_patches.each(&:tick)
     self.current_date += 1.day
   end
 

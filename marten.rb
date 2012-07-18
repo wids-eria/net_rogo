@@ -254,7 +254,7 @@ class Marten
 
     if rand > (1 - p_kill)
       self.energy += 140
-      tile_here.vole_population =- 1
+      tile_here.vole_population -= 1
     end
   end
 
@@ -267,7 +267,8 @@ class Marten
     end
 
     if rand > p_mort
-      die #TODO: make sure 'die' works
+      print '!'
+      die
     end
   end
 
@@ -287,6 +288,7 @@ class Marten
 
   def die_if_starved
     if energy < 0
+      print ':('
       die
     end
   end
