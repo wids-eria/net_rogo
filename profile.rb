@@ -1,5 +1,6 @@
 require 'ruby-prof'
 require File.dirname(__FILE__) + '/male_marten'
+require 'chunky_png'
 
 # Profile the code
 
@@ -7,12 +8,12 @@ puts 'world'
 world = World.new width: 1351, height: 712
 
 puts 'spawning'
-martens = MaleMarten.spawn_population world, 100
+martens = MaleMarten.spawn_population world, 10
 
 RubyProf.start
 
 puts 'ticking'
-1.times{ print '.'; world.tick }
+1000.times{ print '.'; world.tick; world.to_png }
 
 result = RubyProf.stop
 

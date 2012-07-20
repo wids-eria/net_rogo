@@ -17,7 +17,7 @@ class Marten
   # NEED TO ADD PERSISTENT VARIABLES:
   attr_accessor :x, :y
   attr_accessor :world
-  attr_accessor :age, :energy, :previous_location, :heading, :spawned
+  attr_accessor :age, :energy, :previous_location, :heading, :spawned, :max_energy
 
   def id
     object_id
@@ -29,6 +29,7 @@ class Marten
     self.age = 0
     self.location = [0.0, 0.0]
     self.heading = 0.0
+    self.max_energy = MAX_ENERGY
   end
 
 
@@ -50,7 +51,7 @@ class Marten
     marten.world = world
     world.martens << marten
 
-    marten.energy = MAX_ENERGY
+    marten.energy = marten.max_energy
     marten.spawned = true
     marten
   end
@@ -188,7 +189,7 @@ class Marten
   end
 
   def satiated?
-    energy >= (MAX_ENERGY * 1.5)
+    self.energy >= (self.max_energy * 1.5)
   end
 
 
@@ -199,7 +200,7 @@ class Marten
 
       if satiated?
         # TODO test me
-        self.energy = MAX_ENERGY
+        self.energy = self.max_energy
         break
       end
 
@@ -280,8 +281,8 @@ class Marten
       self.energy -= 227
     end
 
-    if energy > MAX_ENERGY
-      energy = MAX_ENERGY
+    if self.energy > self.max_energy
+      self.energy = self.max_energy
     end
   end
 
