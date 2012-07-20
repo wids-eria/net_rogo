@@ -5,15 +5,16 @@ require 'chunky_png'
 # Profile the code
 
 puts 'world'
-world = World.new width: 1351, height: 712
+#world = World.new width: 1351, height: 712
+world = World.new width: 35, height: 35
 
 puts 'spawning'
-martens = MaleMarten.spawn_population world, 10
+martens = MaleMarten.spawn_population world, 1
 
 RubyProf.start
 
 puts 'ticking'
-1000.times{ print '.'; world.tick; world.to_png }
+500.times{ print '.'; world.tick; world.to_png }
 
 result = RubyProf.stop
 

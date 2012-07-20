@@ -30,12 +30,12 @@ class MaleMarten < Marten
   end
 
   def not_taken_by_other_marten? target
-    target.marten_id.nil? || target.marten_id == self.id
+    target.marten.nil? || target.marten == self
   end
 
 
   def leave_scent_mark
-    self.patch.marten_id = self
+    self.patch.marten = self
     self.patch.marten_scent_age = 0
   end
 
@@ -44,8 +44,22 @@ class MaleMarten < Marten
   def move_one_patch
     target = patch_ahead 1
 
-    if passable?(target) && (patch_desirable?(target) || should_leave?)
-      walk_forward 1
+    # faced patch desirable
+    # faced patch force move
+    #
+    # find desirable neighboring patch
+    # no desirable, about face
+
+    if passable?(target)
+      if patch_desirable?(target)
+        walk_forward 1
+        self.random_walk_suitable_count += 1
+      elsif should_leave?
+        walk_forward 1
+        self.random_walk_unsuitable_count += 1
+      else
+        select_forage_patch_and_move
+      end
     else
       select_forage_patch_and_move
     end

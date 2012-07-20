@@ -1,4 +1,27 @@
 require 'date'
+require 'csv'
+
+module Enumerable
+
+    def sum
+      self.inject(0){|accum, i| accum + i }
+    end
+
+    def mean
+      self.sum/self.length.to_f
+    end
+
+    def sample_variance
+      m = self.mean
+      sum = self.inject(0){|accum, i| accum +(i-m)**2 }
+      sum/(self.length - 1).to_f
+    end
+
+    def standard_deviation
+      return Math.sqrt(self.sample_variance)
+    end
+
+end 
 
 class World
   attr_accessor :height, :width, :patches, :martens, :current_date, :tick_count
@@ -32,6 +55,14 @@ class World
     all_patches.each(&:tick)
     self.current_date += 1.day
     self.tick_count += 1
+    output_stats
+  end
+
+  def output_stats
+    vole_population = all_patches.collect(&:vole_population)
+    CSV.open("vole_stats.csv", "ab") do |csv_file|
+      csv_file << [tick_count, vole_population.standard_deviation, vole_population.mean]
+    end
   end
 
   def day_of_year
@@ -78,7 +109,7 @@ class World
   end
 
   def to_png
-    file_name = "world_tick_#{self.tick_count}.png"
+    file_name = File.join('tick_images', "world_tick_#{self.tick_count}.png")
     canvas = ChunkyPNG::Image.new self.width, self.height, ChunkyPNG::Color(:black)
 
     # interpolate 255 = all of 1st color, 0 = all of 2nd color
@@ -94,12 +125,14 @@ class World
       canvas[patch.x, patch.y] = blender
 
       if !patch.marten_scent_age.nil?
-        scent_color = ChunkyPNG::Color(0,0,100)
-        alpha = 1 - patch.marten_scent_age/14.0
-        # TODO marten energy color in trail?
-        blender = ChunkyPNG::Color.interpolate_quick scent_color, canvas[patch.x, patch.y], (alpha * 255).to_i
+        scent_color = patch.marten.color.clone
+        scent_color.saturation *= 0.5
+        scent_color.lightness *= 0.75
+        rgb = scent_color.to_rgb
 
-        canvas[patch.x, patch.y] = blender
+        color = ChunkyPNG::Color(rgb.red.to_i,rgb.green.to_i,rgb.blue.to_i)
+
+        canvas[patch.x, patch.y] = color
       end
     end
 
@@ -109,7 +142,7 @@ class World
 
       alpha = marten.energy/marten.max_energy
       blender = ChunkyPNG::Color.interpolate_quick happy_color, sad_color, (alpha * 255).to_i
-      #canvas.circle marten.x.to_i, marten.y.to_i, 1, blender
+
       canvas[marten.x.to_i, marten.y.to_i] = blender
       # draw heading here
     end

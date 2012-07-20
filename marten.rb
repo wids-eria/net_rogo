@@ -1,12 +1,14 @@
 require File.dirname(__FILE__) + '/patch'
 require File.dirname(__FILE__) + '/number'
 require File.dirname(__FILE__) + '/world'
+require 'chunky_png'
+require 'color'
+require 'csv'
 
 class Marten
 
   MAX_ENERGY = 3334.8
   BASE_PATCH_ENTRANCE_PROBABILITY = 0.03
-  MAX_VIEW_DISTANCE = 10 
   # approximate max energy (Kj) storage in reserves
   # body fat contains 39.7 kj/g - Buskirk and Harlow 1989
   # body composition mean 5.6% fat - Buskirk and Harlow 1989
@@ -17,7 +19,9 @@ class Marten
   # NEED TO ADD PERSISTENT VARIABLES:
   attr_accessor :x, :y
   attr_accessor :world
-  attr_accessor :age, :energy, :previous_location, :heading, :spawned, :max_energy
+  attr_accessor :age, :energy, :previous_location, :heading, :spawned, :max_energy, :color
+  attr_accessor :random_walk_suitable_count, :random_walk_unsuitable_count
+  attr_accessor :suitable_neighborhood_selection_count, :backtrack_count
 
   def id
     object_id
@@ -30,6 +34,14 @@ class Marten
     self.location = [0.0, 0.0]
     self.heading = 0.0
     self.max_energy = MAX_ENERGY
+
+    self.color = Color::HSL.new(rand * 360, 100, 30)
+
+
+     self.random_walk_suitable_count = 0
+     self.random_walk_unsuitable_count = 0
+     self.suitable_neighborhood_selection_count = 0
+     self.backtrack_count = 0
   end
 
 
@@ -125,7 +137,6 @@ class Marten
       world.patch(x+1,y+1) ].compact
   end
 
-  # psst, 'netlogo' neighborhood.. patch center x/y
 
   def self.habitat_suitability_for(patch)
     HABITAT_SUITABILITY[patch.land_cover_class]
@@ -213,7 +224,7 @@ class Marten
     move_one_patch
     leave_scent_mark
     hunt
-    check_predation
+    #check_predation
     remember_previous_location
   end
 
@@ -229,10 +240,12 @@ class Marten
       unless self.previous_location == location
         face_location self.previous_location # FIXME centroid of patch? or exact location?
         walk_forward 1
+        self.backtrack_count += 1
       end
     else
       face_patch patches.shuffle.max_by(&:max_vole_pop)
       walk_forward 1
+      self.suitable_neighborhood_selection_count += 1
     end
   end
 
@@ -296,7 +309,15 @@ class Marten
 
 
   def die
+    output_stats
+
     world.martens.delete self
+  end
+
+  def output_stats
+    CSV.open("marten_stats.csv", "ab") do |csv_file|
+      csv_file << [id, random_walk_suitable_count, random_walk_unsuitable_count, suitable_neighborhood_selection_count, backtrack_count, energy, world.tick_count]
+    end
   end
 
 
