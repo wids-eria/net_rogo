@@ -9,7 +9,7 @@ puts 'world'
 world = World.new width: 35, height: 35
 
 puts 'spawning'
-martens = MaleMarten.spawn_population world, 1
+martens = MaleMarten.spawn_population world, 2 
 
 RubyProf.start
 

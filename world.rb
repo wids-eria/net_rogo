@@ -61,7 +61,7 @@ class World
   def output_stats
     vole_population = all_patches.collect(&:vole_population)
     CSV.open("vole_stats.csv", "ab") do |csv_file|
-      csv_file << [tick_count, vole_population.standard_deviation, vole_population.mean]
+      csv_file << [tick_count, martens.count, vole_population.standard_deviation, vole_population.mean]
     end
   end
 
