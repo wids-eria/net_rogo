@@ -7,11 +7,11 @@ require 'progressbar'
 # Profile the code
 
 puts 'world'
-#world = World.new width: 1351, height: 712
-world = World.new width: 100, height: 100
+world = World.new width: 1351, height: 712
+#world = World.new width: 100, height: 100
 
 puts 'spawning'
-martens = MaleMarten.spawn_population world, 5
+martens = MaleMarten.spawn_population world, 200
 
 #RubyProf.start
 

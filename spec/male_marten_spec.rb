@@ -163,7 +163,7 @@ describe MaleMarten do
             male_marten.location = [1.5, 1.5]
             male_marten.energy = 1000000
             desired_patch.land_cover_class = :deciduous
-            desired_patch.marten_id = nil
+            desired_patch.marten = nil
           end
 
           context "that is unscented" do
