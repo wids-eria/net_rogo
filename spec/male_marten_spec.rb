@@ -9,6 +9,10 @@ describe MaleMarten do
     male_marten.location = [1.5, 1.5]
   end
 
+  it 'has mortality' do
+    puts 100.times.collect{(365*male_marten.active_hours*200).times.select{ male_marten.die_from_fatal_blows? }.count}.mean
+  end
+
   it 'ticks' do
     male_marten.tick
   end
