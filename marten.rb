@@ -274,15 +274,21 @@ class Marten
 
 
   def check_predation
-    if habitat_suitability_for(self.patch) == 1
-      p_mort = Math.exp(Math.log(0.99897) / self.active_hours) # based on daily predation rates decomposed to hourly rates (from Thompson and Colgan (1994))
-    else
-      p_mort = Math.exp(Math.log(0.99555) / self.active_hours)
-    end
-
-    if rand > p_mort
+    if die_from_fatal_blows?
       print '!'
       die
+    end
+  end
+
+  def die_from_fatal_blows?
+    rand > mortality_probability
+  end
+
+  def mortality_probability
+    if habitat_suitability_for(self.patch) == 1
+      return Math.exp(Math.log(0.99897) / self.active_hours) # based on daily predation rates decomposed to hourly rates (from Thompson and Colgan (1994))
+    else
+      return = Math.exp(Math.log(0.99555) / self.active_hours)
     end
   end
 
