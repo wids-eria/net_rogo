@@ -17,9 +17,9 @@ describe MaleMarten do
     male_marten.tick
   end
 
-  it 'does 1000 ticks' do
+  it 'does 100 ticks' do
     male_marten
-    1000.times{ world.tick }
+    100.times{ world.tick }
   end
 
   it 'ticks with a randomized world'

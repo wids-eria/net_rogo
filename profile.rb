@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'bundler/setup'
 require File.dirname(__FILE__) + '/male_marten'
+require File.dirname(__FILE__) + '/female_marten'
 require 'chunky_png'
 require 'progressbar'
 
@@ -11,8 +12,8 @@ world = World.new width: 1351, height: 712
 #world = World.new width: 100, height: 100
 
 puts 'spawning'
-martens = MaleMarten.spawn_population world, 100
-martens = FemaleMarten.spawn_population world, 100
+MaleMarten.spawn_population world, 100
+FemaleMarten.spawn_population world, 100
 #RubyProf.start
 
 ProgressBar.color_status

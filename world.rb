@@ -143,7 +143,11 @@ class World
       alpha = marten.energy/marten.max_energy
       blender = ChunkyPNG::Color.interpolate_quick happy_color, sad_color, (alpha * 255).to_i
 
-      canvas[marten.x.to_i, marten.y.to_i] = blender
+      if marten.kind_of? MaleMarten
+        canvas[marten.x.to_i, marten.y.to_i] = blender
+      else
+        canvas.circle(marten.x.to_i, marten.y.to_i, 1, blender)
+      end
       # draw heading here
     end
 

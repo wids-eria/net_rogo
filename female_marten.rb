@@ -1,5 +1,13 @@
 require File.dirname(__FILE__) + '/marten'
+require File.dirname(__FILE__) + '/male_marten'
+require 'simple-random'
 class FemaleMarten < Marten
+TURN_STANDARD_DEVIATION = 30
+
+  def initialize
+    super
+    self.color = Color::HSL.new(340, 70, 88)
+  end
 
   def tick
     raise 'spawn me' if spawned?
@@ -62,7 +70,9 @@ class FemaleMarten < Marten
     #  turn self.normal_dist 0 self.turn_sd
 
     # correlated -
-      turn self.normal_dist 180 self.turn_sd
+      simple = SimpleRandom.new
+      simple.set_seed
+      turn simple.normal(180, TURN_STANDARD_DEVIATION)
   end
 
 
@@ -103,12 +113,15 @@ class FemaleMarten < Marten
   end
 
   def immature_reproductive_age?
-   365..730.include? age 
+   (365..730).include? self.age 
   end
 
   def mature_reproductive_range?
-   age > 731
+   self.age > 731
   end
 
+  def leave_scent_mark
+    # no scent
+  end
 end
 

@@ -224,7 +224,7 @@ class Marten
     move_one_patch
     leave_scent_mark
     hunt
-    #check_predation
+    check_predation
     remember_previous_location
   end
 
