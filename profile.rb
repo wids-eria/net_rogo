@@ -14,6 +14,10 @@ world = World.new width: 1351, height: 712
 puts 'spawning'
 MaleMarten.spawn_population world, 100
 FemaleMarten.spawn_population world, 100
+world.martens.each do |marten|
+  marten.age = 730
+end
+
 #RubyProf.start
 
 ProgressBar.color_status

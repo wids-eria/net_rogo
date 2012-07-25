@@ -90,7 +90,7 @@ TURN_STANDARD_DEVIATION = 30
   end
 
   def attempt_to_reproduce
-   if growing_season? 
+    if first_day_of_spring?
      if immature_reproductive_age?
        if rand > 0.5 
          (1..5).to_a.sample.times{reproduce}
@@ -102,6 +102,10 @@ TURN_STANDARD_DEVIATION = 30
        end
      end
    end
+  end
+
+  def first_day_of_spring?
+   world.day_of_year == 80
   end
 
   def reproduce
