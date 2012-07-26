@@ -153,4 +153,8 @@ class World
 
     canvas.save file_name
   end
+
+  def import(filename)
+
+  end
 end
