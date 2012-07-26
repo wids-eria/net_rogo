@@ -42,7 +42,7 @@ class Patch
              :developed_medium_intensity => [255,  0,  8],
              :grassland_herbaceous => [238, 235, 208],
              :shrub_scrub => [214, 185, 136],
-             :excluded => [255, 0, 255]}
+             :excluded => [0, 0, 0]}
 
 
   def initialize

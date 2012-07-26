@@ -110,10 +110,9 @@ class World
 
   def to_png
     file_name = File.join('tick_images', "world_tick_#{self.tick_count}.png")
-    canvas = ChunkyPNG::Image.new self.width, self.height, ChunkyPNG::Color(:black)
+    canvas = ChunkyPNG::Image.new self.width, self.height
 
     # interpolate 255 = all of 1st color, 0 = all of 2nd color
-
     all_patches.each do |patch|
       vole_color  = ChunkyPNG::Color(100,0,100)
       patch_color = ChunkyPNG::Color(*patch.color)
@@ -144,7 +143,8 @@ class World
       blender = ChunkyPNG::Color.interpolate_quick happy_color, sad_color, (alpha * 255).to_i
 
       if marten.kind_of? MaleMarten
-        canvas[marten.x.to_i, marten.y.to_i] = blender
+        canvas.circle(marten.x.to_i, marten.y.to_i, 1, blender)
+        canvas.circle(marten.x.to_i, marten.y.to_i, 2, blender)
       else
         canvas.circle(marten.x.to_i, marten.y.to_i, 1, blender)
       end
