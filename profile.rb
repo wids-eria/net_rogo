@@ -8,8 +8,9 @@ require 'progressbar'
 # Profile the code
 
 puts 'world'
-world = World.new width: 1351, height: 712
-#world = World.new width: 100, height: 100
+#world = World.new width: 1351, height: 712
+world = World.import("eagle.csv")
+world.to_png
 
 puts 'spawning'
 MaleMarten.spawn_population world, 100

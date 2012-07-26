@@ -115,12 +115,11 @@ class World
     # interpolate 255 = all of 1st color, 0 = all of 2nd color
 
     all_patches.each do |patch|
-      land_color = ChunkyPNG::Color(0,0,0)
-      canvas[patch.x, patch.y] = land_color if patch.land_cover_class == :deciduous
+      vole_color  = ChunkyPNG::Color(100,0,100)
+      patch_color = ChunkyPNG::Color(*patch.color)
 
-      vole_color = ChunkyPNG::Color(100,0,100)
       alpha = 1 - patch.vole_population/patch.max_vole_pop #light up as it goes empty
-      blender = ChunkyPNG::Color.interpolate_quick vole_color, land_color, (alpha * 255).to_i
+      blender = ChunkyPNG::Color.interpolate_quick vole_color, patch_color, (alpha * 255).to_i
 
       canvas[patch.x, patch.y] = blender
 
@@ -129,8 +128,9 @@ class World
         scent_color.saturation *= 0.5
         scent_color.lightness *= 0.75
         rgb = scent_color.to_rgb
+        rgb = [rgb.red, rgb.green, rgb.blue].map(&:to_i)
 
-        color = ChunkyPNG::Color(rgb.red.to_i,rgb.green.to_i,rgb.blue.to_i)
+        color = ChunkyPNG::Color(*rgb)
 
         canvas[patch.x, patch.y] = color
       end
@@ -154,7 +154,29 @@ class World
     canvas.save file_name
   end
 
-  def import(filename)
+  def self.import(filename)
+    csv_rows = []
+    CSV.foreach(filename) { |row| csv_rows << row }
+    headers = csv_rows.shift
+    x_pos = headers.index('ROW')
+    y_pos = headers.index('COL')
+    land_cover_pos = headers.index('LANDCOV2006')
 
+    width  = csv_rows.collect{|row| row[x_pos].to_i}.max + 1
+    height = csv_rows.collect{|row| row[y_pos].to_i}.max + 1
+
+    world = self.new(width: width, height: height)
+
+    csv_rows.each do |csv_row|
+      x = csv_row[x_pos].to_i
+      y = csv_row[y_pos].to_i
+      cover_code = csv_row[land_cover_pos].to_i
+      patch = world.patch(x,y)
+      patch.land_cover_from_code cover_code
+    end
+
+    puts world.all_patches.collect{|patch| patch.land_cover_class }.uniq.inspect
+
+    world
   end
 end

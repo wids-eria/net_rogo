@@ -37,6 +37,10 @@ TURN_STANDARD_DEVIATION = 30
     (1 - BASE_PATCH_ENTRANCE_PROBABILITY) * (self.energy / MAX_ENERGY)
   end
 
+  def should_leave?
+    stay_probability < rand
+  end
+
 
   # sex-specific sub-routines that feed into move_one_patch function 
   def move_one_patch

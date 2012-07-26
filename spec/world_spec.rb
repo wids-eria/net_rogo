@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../world'
 require File.dirname(__FILE__) + '/../patch'
 
 describe World do
-  let!(:world) { World.new width: 30, height: 30 }
+  let(:world) { World.new width: 30, height: 30 }
   it 'returns the patch at x 1, y 5' do
     patch = world.patch(1,5)
     patch.x.should == 1
@@ -35,5 +35,9 @@ describe World do
 
   it 'contains unique patches for every x,y' do
     world.all_patches.size.should == world.all_patches.uniq.size
+  end
+
+  it 'imports' do
+    World.import('eagle.csv')
   end
 end
