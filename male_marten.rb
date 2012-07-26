@@ -1,4 +1,8 @@
 require File.dirname(__FILE__) + '/marten'
+require 'logger'
+
+$log = Logger.new("marten_events.log")
+
 class MaleMarten < Marten
 
   def tick
@@ -14,7 +18,7 @@ class MaleMarten < Marten
     metabolize
     self.age += 1
     if age > (18 * 365)
-      print 'wat'
+      $log.info "#{self.id} died of old age"
       die
     end
   end
