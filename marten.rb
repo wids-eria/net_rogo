@@ -4,6 +4,9 @@ require File.dirname(__FILE__) + '/world'
 require 'chunky_png'
 require 'color'
 require 'csv'
+require 'logger'
+
+$log = Logger.new("marten_events.log")
 
 class Marten
 
@@ -275,7 +278,7 @@ class Marten
 
   def check_predation
     if die_from_fatal_blows?
-      print '!'
+      $log.info "#{self.id} died from predation"
       die
     end
   end
@@ -308,7 +311,7 @@ class Marten
 
   def die_if_starved
     if energy < 0
-      print ':('
+      $log.info "#{self.id} died from starvation"
       die
     end
   end

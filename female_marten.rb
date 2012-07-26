@@ -1,6 +1,10 @@
 require File.dirname(__FILE__) + '/marten'
 require File.dirname(__FILE__) + '/male_marten'
 require 'simple-random'
+require 'logger'
+
+$log = Logger.new("marten_events.log")
+
 class FemaleMarten < Marten
 TURN_STANDARD_DEVIATION = 30
 
@@ -23,7 +27,7 @@ TURN_STANDARD_DEVIATION = 30
     attempt_to_reproduce
     self.age += 1
     if age > (18 * 365)
-      print 'wat'
+      $log.info "#{self.id} died of old age"
       die
     end
   end
