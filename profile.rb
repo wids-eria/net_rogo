@@ -8,7 +8,7 @@ require 'progressbar'
 # Profile the code
 
 puts 'world'
-world = World.import("eagle.csv")
+world = World.import("vilas.csv")
 world.job_name = Time.now.to_i.to_s
 world.to_png
 
@@ -24,7 +24,7 @@ end
 ProgressBar.color_status
 ProgressBar.iter_rate_mode
 bar = ProgressBar.new 'ticks', 500
-500.times{ world.tick; world.to_png; bar.inc }
+500.times{ world.tick; bar.inc }
 bar.finish
 
 #result = RubyProf.stop
