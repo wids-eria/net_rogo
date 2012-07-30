@@ -1,5 +1,6 @@
 require 'date'
 require 'csv'
+require 'fileutils'
 
 module Enumerable
 
@@ -25,6 +26,7 @@ end
 
 class World
   attr_accessor :height, :width, :patches, :martens, :current_date, :tick_count
+  attr_accessor :job_name
 
   def initialize(options = {})
     self.height = options[:height]
@@ -32,6 +34,7 @@ class World
     self.current_date = Date.new
     self.martens = []
     self.tick_count = 0
+    self.job_name = "name_me"
 
     self.patches = Array.new(width) { Array.new(height) }
 
@@ -60,7 +63,9 @@ class World
 
   def output_stats
     vole_population = all_patches.collect(&:vole_population)
-    CSV.open("vole_stats.csv", "ab") do |csv_file|
+    dir_name = File.join(self.job_name)
+    FileUtils.mkdir_p(dir_name)
+    CSV.open(File.join(dir_name, "vole_stats.csv"), "ab") do |csv_file|
       csv_file << [tick_count, martens.count, vole_population.standard_deviation, vole_population.mean]
     end
   end
@@ -109,7 +114,9 @@ class World
   end
 
   def to_png
-    file_name = File.join('tick_images', "world_tick_#{self.tick_count}.png")
+    dir_name = File.join(self.job_name, "tick_images")
+    FileUtils.mkdir_p(dir_name)
+    file_name = File.join(dir_name, "world_tick_#{self.tick_count}.png")
     canvas = ChunkyPNG::Image.new self.width, self.height
 
     # interpolate 255 = all of 1st color, 0 = all of 2nd color

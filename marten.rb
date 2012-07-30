@@ -324,7 +324,9 @@ class Marten
   end
 
   def output_stats
-    CSV.open("marten_stats.csv", "ab") do |csv_file|
+    dir_name = File.join(self.world.job_name)
+    FileUtils.mkdir_p(dir_name)
+    CSV.open(File.join(dir_name, "marten_stats.csv"), "ab") do |csv_file|
       csv_file << [id, random_walk_suitable_count, random_walk_unsuitable_count, suitable_neighborhood_selection_count, backtrack_count, energy, world.tick_count]
     end
   end

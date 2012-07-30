@@ -9,6 +9,7 @@ require 'progressbar'
 
 puts 'world'
 world = World.import("eagle.csv")
+world.job_name = Time.now.to_i.to_s
 world.to_png
 
 puts 'spawning'
