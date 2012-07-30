@@ -8,7 +8,6 @@ require 'progressbar'
 # Profile the code
 
 puts 'world'
-#world = World.new width: 1351, height: 712
 world = World.import("eagle.csv")
 world.to_png
 
