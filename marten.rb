@@ -289,9 +289,11 @@ class Marten
 
   def mortality_probability
     if habitat_suitability_for(self.patch) == 1
-      return Math.exp(Math.log(0.99897) / self.active_hours) # based on daily predation rates decomposed to hourly rates (from Thompson and Colgan (1994))
+      #return Math.exp(Math.log(0.99897) / self.active_hours) # based on daily predation rates decomposed to hourly rates (from Thompson and Colgan (1994))
+      return 0.99897**(1/self.active_hours)
     else
-      return Math.exp(Math.log(0.99555) / self.active_hours)
+      #return Math.exp(Math.log(0.99555) / self.active_hours)
+      return 0.99555**(1/self.active_hours)
     end
   end
 
