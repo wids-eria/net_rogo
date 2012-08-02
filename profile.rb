@@ -22,8 +22,8 @@ end
 
 ProgressBar.color_status
 ProgressBar.iter_rate_mode
-bar = ProgressBar.new 'ticks', 500
-500.times{ world.tick; bar.inc }
+bar = ProgressBar.new 'ticks', 730 
+730.times{ world.tick; bar.inc } # world.to_png; 
 bar.finish
 
 #result = RubyProf.stop
