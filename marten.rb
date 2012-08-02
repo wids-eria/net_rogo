@@ -75,7 +75,7 @@ class Marten
     spawned.nil? || !spawned
   end
 
-  HABITAT_SUITABILITY = { open_water: 0,
+  HABITAT_SUITABILITY = { open_water: -1,
                           developed_open_space: 0,
                           developed_low_intensity: 0,
                           developed_medium_intensity: 0,
@@ -91,7 +91,7 @@ class Marten
                           cultivated_crops: 0,
                           forested_wetland: 1,
                           emergent_herbaceous_wetland: 0,
-                          excluded: 0 }
+                          excluded: -1 }
 
 
   def day_of_year
@@ -150,7 +150,7 @@ class Marten
   end
 
   def self.passable?(patch)
-    !patch.nil?
+    !patch.nil? && habitat_suitability_for(patch) !=(-1) 
   end
 
   def passable?(patch)
