@@ -150,7 +150,7 @@ class Marten
   end
 
   def self.passable?(patch)
-    !patch.nil? && habitat_suitability_for(patch) !=(-1)
+    !patch.nil? && habitat_suitability_for(patch) != -1 
   end
 
   def passable?(patch)
