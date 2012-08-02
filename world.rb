@@ -116,7 +116,8 @@ class World
   def to_png
     dir_name = File.join(self.job_name, "tick_images")
     FileUtils.mkdir_p(dir_name)
-    file_name = File.join(dir_name, "world_tick_#{self.tick_count}.png")
+    file_name = "world_tick_%05d.png" %self.tick_count 
+    full_path = File.join(dir_name, file_name)
     canvas = ChunkyPNG::Image.new self.width, self.height
 
     # interpolate 255 = all of 1st color, 0 = all of 2nd color
@@ -158,7 +159,7 @@ class World
       # draw heading here
     end
 
-    canvas.save file_name
+    canvas.save full_path
   end
 
   def self.import(filename)
