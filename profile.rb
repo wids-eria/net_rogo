@@ -10,6 +10,7 @@ require 'progressbar'
 puts 'world'
 world = World.import("vilas.csv")
 world.job_name = Time.now.to_i.to_s
+#world.to_png
 
 puts 'spawning'
 MaleMarten.spawn_population world, 100

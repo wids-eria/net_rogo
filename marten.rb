@@ -203,7 +203,7 @@ class Marten
   end
 
   def satiated?
-    self.energy >= (self.max_energy * 1.5)
+    self.energy >= (self.max_energy)
   end
 
 
