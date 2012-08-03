@@ -170,6 +170,18 @@ class Marten
     80..355
   end
 
+  def summer?
+    (197..319).include? day_of_year
+  end
+
+  def winter?
+    day_of_year > 319 || day_of_year < 75
+  end
+
+  def kit_rearing?
+    (75..196).include? day_of_year
+  end
+
   def growing_season?
     growing_season_range.include? day_of_year
   end
@@ -288,13 +300,32 @@ class Marten
   end
 
   def mortality_probability
+    datums = {
+      "MaleMarten" => {
+        summer: [1,0.9965765],
+        winter: [0.9992273,0.9958064],
+        kit_rearing: [0.9994149,0.9959934]
+      },
+      "FemaleMarten" => {
+        summer: [1,0.9965765],
+        winter: [0.99780611,0.9943901],
+        kit_rearing: [0.9993278,0.9959066]
+      }
+    }
     if habitat_suitability_for(self.patch) == 1
       #return Math.exp(Math.log(0.99897) / self.active_hours) # based on daily predation rates decomposed to hourly rates (from Thompson and Colgan (1994))
-      return 0.99897**(1/self.active_hours)
+      #return 0.99897**(1/self.active_hours)
+      return datums[self.class.to_s][:summer][0] if summer?
+      return datums[self.class.to_s][:winter][0] if winter?
+      return datums[self.class.to_s][:kit_rearing][0] if kit_rearing?
+      
     else
       #return Math.exp(Math.log(0.99555) / self.active_hours)
-      return 0.99555**(1/self.active_hours)
-    end
+      #return 0.99555**(1/self.active_hours)
+      return datums[self.class.to_s][:summer][1] if summer?
+      return datums[self.class.to_s][:winter][1] if winter?
+      return datums[self.class.to_s][:kit_rearing][1] if kit_rearing?
+     end
   end
 
 
