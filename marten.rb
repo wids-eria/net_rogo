@@ -81,7 +81,7 @@ class Marten
                           developed_medium_intensity: 0,
                           developed_high_intensity: 0,
                           barren: 0,
-                          deciduous: 0,
+                          deciduous: 1,
                           coniferous: 1,
                           mixed: 1,
                           dwarf_scrub: 0,
