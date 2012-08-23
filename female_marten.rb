@@ -33,40 +33,7 @@ TURN_STANDARD_DEVIATION = 30
   end
 
 
-  def stay_probability
-    (1 - BASE_PATCH_ENTRANCE_PROBABILITY) * (self.energy / MAX_ENERGY)
-  end
-
-  def should_leave?
-    stay_probability < rand
-  end
-
-
   # sex-specific sub-routines that feed into move_one_patch function 
-  def move_one_patch
-    target = patch_ahead 1
-
-    # faced patch desirable
-    # faced patch force move
-    #
-    # find desirable neighboring patch
-    # no desirable, about face
-
-    if passable?(target)
-      if patch_desirable?(target)
-        walk_forward 1
-        self.random_walk_suitable_count += 1
-      elsif should_leave?
-        walk_forward 1
-        self.random_walk_unsuitable_count += 1
-      else
-        select_forage_patch_and_move
-      end
-    else
-      select_forage_patch_and_move
-    end
-  end
-
 
   def face_random_direction
     # different turn methods
@@ -84,19 +51,11 @@ TURN_STANDARD_DEVIATION = 30
   end
 
 
-  def desirable_patches
-    #neighborhood_in_radius(1).select{|patch| patch_desirable? patch }
-    neighborhood.select{|patch| patch_desirable? patch }
-  end
-
   def patch_desirable?(patch)
     habitat_suitability_for(patch) == 1
   end
 
-  def self.can_spawn_on?(patch)
-    self.passable?(patch) && self.habitat_suitability_for(patch) == 1
-  end
-
+  
   def attempt_to_reproduce
     if first_day_of_spring?
      if immature_reproductive_age?
