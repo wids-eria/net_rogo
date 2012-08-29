@@ -1,0 +1,54 @@
+## WHAT IS IT?
+
+(a general understanding of what the model is trying to show or explain)
+
+## HOW IT WORKS
+
+(what rules the agents use to create the overall behavior of the model)
+
+DIURNAL VARIATION - 
+ - tend to actively feed primarily around twilight, activity period extended during late summer
+   - during feeding
+     - move to areas of high food resource (generally open areas during the growing season, deciduous forest in early spring and winter)
+     - response to other individuals depends on what type of habitat they are in (dispersed vs. clumped aggregation)
+   - when not feeding
+     - seek cover (thicker cover types, dense young(?) forest)
+     - again, respond differently to other deer based on visibility of current cover type)
+
+
+seasonal variation; 
+ - preference for conifers in winter
+ - rut
+ - normal behavior in growing season
+
+death - probabalistic
+sex - 
+eating
+
+## HOW TO USE IT
+
+(how to use the model, including a description of each of the items in the Interface tab)
+
+## THINGS TO NOTICE
+
+(suggested things for the user to notice while running the model)
+
+## THINGS TO TRY
+
+(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
+
+## EXTENDING THE MODEL
+
+(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
+
+## NETLOGO FEATURES
+
+View distance - the distance an individual agent is able to see is determined by the existing vegetation. In open habitats, the deer can see further, allowing them a larger search radius for food. In addition, there is a behavioral change in this habitat; given the increased viewing distance, individuals tend to aggregate, to utilize a collective lookout strategy of predator avoidance. In contrast, in the more dense habitat (forest) their view distance is restricted, and they avoid each other to adopt a different predator avoidance strategy.
+
+## RELATED MODELS
+
+(models in the NetLogo Models Library and elsewhere which are of related interest)
+
+## CREDITS AND REFERENCES
+
+(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)

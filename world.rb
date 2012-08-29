@@ -25,7 +25,7 @@ module Enumerable
 end 
 
 class World
-  attr_accessor :height, :width, :patches, :martens, :current_date, :tick_count
+  attr_accessor :height, :width, :patches, :martens, :deers, :current_date, :tick_count
   attr_accessor :job_name
 
   def initialize(options = {})
@@ -33,6 +33,7 @@ class World
     self.width = options[:width]
     self.current_date = Date.new
     self.martens = []
+    self.deers = []
     self.tick_count = 0
     self.job_name = "name_me"
 
@@ -55,6 +56,7 @@ class World
 
   def tick
     martens.each(&:tick)
+    deers.each(&:tick)
     all_patches.each(&:tick)
     self.current_date += 1.day
     self.tick_count += 1

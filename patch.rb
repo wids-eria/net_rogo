@@ -5,6 +5,8 @@ class Patch
 
   attr_accessor :max_vole_pop
   attr_accessor :vole_population
+  attr_accessor :deer_browse
+  attr_accessor :deer_fall_winter_food, :deer_spring_summer_food, :deer_thermal_cover
 
   MAX_VOLE_POP = 13.9
   UNHINDERED_VOLE_GROWTH_RATE = 0.00344
@@ -49,6 +51,9 @@ class Patch
     self.land_cover_class = :barren
     self.max_vole_pop = MAX_VOLE_POP
     self.vole_population = self.max_vole_pop
+    self.deer_fall_winter_food = 0
+    self.deer_spring_summer_food = 0
+    self.deer_thermal_cover = 0
   end
 
   def tick
