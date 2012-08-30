@@ -97,9 +97,15 @@ class Patch
     UNHINDERED_VOLE_GROWTH_RATE
   end
 
+  def calculate_deer_food_base
+    # TODO: use indexes to determine potential, and logistic growth - deer removal to indicate current food amounts
+  end
+
   def calculate_deer_metrics
-    # TODO: not entirely sure how to pass patch object to assess_thermal_cover function accessed from module
+    # TODO: these indices only needs to be updated once per year
     self.deer_thermal_cover = self.assess_thermal_cover
+    self.deer_spring_summer_food = self.assess_spring_summer_food_potential
+    self.deer_fall_winter_food = self.assess_fall_winter_food_potential
   end
 
   def land_cover_from_code(code)

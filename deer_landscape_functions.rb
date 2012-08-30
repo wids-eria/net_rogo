@@ -1,22 +1,22 @@
 module DeerLandscapeFunctions
   
-    HABITAT_ATTRIBUTES = { open_water:                  {suitability: -1, forest_type_index: 0},
-                         developed_open_space:        {suitability: 1,  forest_type_index: 0},
-                         developed_low_intensity:     {suitability: 1,  forest_type_index: 0},
-                         developed_medium_intensity:  {suitability: 0,  forest_type_index: 0},
-                         developed_high_intensity:    {suitability: 0,  forest_type_index: 0},
-                         barren:                      {suitability: 0,  forest_type_index: 0},
-                         deciduous:                   {suitability: 1,  forest_type_index: 0},
-                         coniferous:                  {suitability: 1,  forest_type_index: 1},
-                         mixed:                       {suitability: 1,  forest_type_index: 0.5},
-                         dwarf_scrub:                 {suitability: 1,  forest_type_index: 0},
-                         shrub_scrub:                 {suitability: 1,  forest_type_index: 0},
-                         grassland_herbaceous:        {suitability: 1,  forest_type_index: 0},
-                         pasture_hay:                 {suitability: 1,  forest_type_index: 0},
-                         cultivated_crops:            {suitability: 1,  forest_type_index: 0},
-                         forested_wetland:            {suitability: 1,  forest_type_index: 0},
-                         emergent_herbaceous_wetland: {suitability: 1,  forest_type_index: 0},
-                         excluded:                    {suitability: -1, forest_type_index: 0} }
+    HABITAT_ATTRIBUTES = { open_water:                {suitability: -1, forest_type_index: 0,   forest: 0},
+                         developed_open_space:        {suitability: 1,  forest_type_index: 0,   forest: 0},
+                         developed_low_intensity:     {suitability: 1,  forest_type_index: 0,   forest: 0},
+                         developed_medium_intensity:  {suitability: 0,  forest_type_index: 0,   forest: 0},
+                         developed_high_intensity:    {suitability: 0,  forest_type_index: 0,   forest: 0},
+                         barren:                      {suitability: 0,  forest_type_index: 0,   forest: 0},
+                         deciduous:                   {suitability: 1,  forest_type_index: 0,   forest: 1},
+                         coniferous:                  {suitability: 1,  forest_type_index: 1,   forest: 1},
+                         mixed:                       {suitability: 1,  forest_type_index: 0.5, forest: 1},
+                         dwarf_scrub:                 {suitability: 1,  forest_type_index: 0,   forest: 0},
+                         shrub_scrub:                 {suitability: 1,  forest_type_index: 0,   forest: 0},
+                         grassland_herbaceous:        {suitability: 1,  forest_type_index: 0,   forest: 0},
+                         pasture_hay:                 {suitability: 1,  forest_type_index: 0,   forest: 0},
+                         cultivated_crops:            {suitability: 1,  forest_type_index: 0,   forest: 0},
+                         forested_wetland:            {suitability: 1,  forest_type_index: 0,   forest: 1},
+                         emergent_herbaceous_wetland: {suitability: 1,  forest_type_index: 0,   forest: 0},
+                         excluded:                    {suitability: -1, forest_type_index: 0,   forest: 0}}
   
   
   def assess_thermal_cover
@@ -66,9 +66,68 @@ module DeerLandscapeFunctions
  end
 
 
- def site_productivity_index
-   max_site_index = 100
-   patch.site_index/max_site_index 
+ def assess_fall_winter_food_potential
+    #forest_composition_index x forest_structure_index x site_productivity_index
+    forest_index = HABITAT_ATTRIBUTES[self.land_cover_class][:forest]
+    if forest_index > 0
+      fall_winter_food_index = (2 * browse_index + mast_index) * 3 * site_productivity_index 
+    else
+      fall_winter_food_index = 0
+    end
  end
 
+
+ def browse_index
+   #TODO: have to link to species-specific traits; upland/lowland x lcc?
+ end
+
+ 
+ def mast_index
+   #TODO: also species specific (oak and beech); upland/lowland x lcc?
+ end
+
+
+ def assess_spring_summer_food_potential
+    #forest_composition_index x forest_structure_index x site_productivity_index
+    forest_index = HABITAT_ATTRIBUTES[self.land_cover_class][:forest]
+    if forest_index > 0
+      spring_summer_food_index = vegetation_type_index * successional_stage_index * site_productivity_index
+    else
+      spring_summer_food_index = 0
+    end
+ end
+
+
+ def vegetation_type_index
+   # upland deciduous and mixed = 1
+   # upland coniferous = 0.4
+   # lowland (aquatic emergent plants) = 0.2 - probably just wetlands (woody and herbacious)
+  if self.land_cover_class = :deciduous or :mixed
+     1
+   elsif self.land_cover_class = :coniferous
+     0.4
+   elsif self.land_cover_class = :forested_wetland or :emergent_herbacious_wetlands
+     0.2
+   else
+     0
+   end
+ end
+
+
+ def successional_stage_index
+   # TODO: these include bedding usage? wtf?
+   # upland deciduous and mixed or lowland early successional = 1.0
+   # upland deciduous and mixed or lowland mid-successional   = 0.6
+   # upland deciduous and mixed or lowland late-successional  = 0.2
+   # upland coniferous early- to mid-successional             = 1.0
+   # upland coniferous late-successional                      = 0.5
+   1
+ end
+
+ 
+ def site_productivity_index
+   # TODO: tie max_site_index to stricter number
+   max_site_index = 100
+   self.site_index/max_site_index 
+ end
 end
