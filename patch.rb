@@ -1,7 +1,12 @@
 class Patch
+  
+  require File.dirname(__FILE__) + '/deer_landscape_functions'
+  include DeerLandscapeFunctions
+
   attr_accessor :x, :y
   attr_accessor :marten, :marten_scent_age
   attr_accessor :land_cover_class
+  attr_accessor :site_index
 
   attr_accessor :max_vole_pop
   attr_accessor :vole_population
@@ -59,6 +64,7 @@ class Patch
   def tick
     age_and_expire_scents
     grow_voles
+    calculate_deer_metrics
   end
 
   def location
@@ -89,6 +95,11 @@ class Patch
 
   def daily_growth_delta
     UNHINDERED_VOLE_GROWTH_RATE
+  end
+
+  def calculate_deer_metrics
+    # TODO: not entirely sure how to pass patch object to assess_thermal_cover function accessed from module
+    self.deer_thermal_cover = self.assess_thermal_cover
   end
 
   def land_cover_from_code(code)

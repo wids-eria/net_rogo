@@ -6,6 +6,15 @@
 
 (what rules the agents use to create the overall behavior of the model)
 
+Deer have two primary modes; active and resting. Typically the active period of this diurnal cycle consists of moving and foraging, while resting consists of bedding down in locations which meet the thermal and cover needs of the individual. Specific behaviors during these two basic modes are further modified by the time of year, which is broken down into three primary seasons; spring/summer, rut, and fall/winter. The spring/summer season lasts from the first dday of spring to the last day of summer, the rut lasts for four(?) weeks following the spring/summer season, and the fall/winter season lasts from the end of the rut to the first day of spring.
+
+In the spring/summer season, deer rely primarily on herbacious vegetation for nutrition. Their diet during this period consists primarily of young aspen and (...), which is reflected in the spring/summer habitat potential algorithm. During this period they roam widely, with females traveling approximately 2.5 km per day, and males up to 6.1 km per day. Bedding location during this period is selected primarily with the intention of reducing predation.
+
+In the fall/winter season, deer rely more heavily on woody browse and mast from oaks and beech, reflected by the fall/winter habitat potential algorithm. This browse is less nutritious than that of the spring/summer season, and the weight of individuals can decrease even if this food source is relatively plentiful. Bedding locations during this period largely reflect the desire for reduced exposure, reflected in the thermal cover potential algorithm.
+
+During the rut, males travel further (up to ~7.4 km per day), primarily with the intention of impregnating as many females as possible during this time, and a lesser focus on eating. Females may enter estrus during this period, at which time they may become impregnated by a buck. Competition may occur for unimpregnated females in estrus, with the winner being determined as a function of individual health (as indicated by weight) and some measure of chance (see mate competition algorithm [not yet described])
+
+
 DIURNAL VARIATION - 
  - tend to actively feed primarily around twilight, activity period extended during late summer
    - during feeding
@@ -16,14 +25,10 @@ DIURNAL VARIATION -
      - again, respond differently to other deer based on visibility of current cover type)
 
 
-seasonal variation; 
- - preference for conifers in winter
- - rut
- - normal behavior in growing season
+Mortality of individuals at this point will be determined probabilistically as a function of the amount of time spent in different habitats (exposure), season, life stage (fawn/adult) and and their energy budget.
 
-death - probabalistic
-sex - 
-eating
+Food resource will be modeled as a logistic growth function that changes as a function of the current day of year, and discounted according to either the spring/summer or fall/winter habitat potential rating.
+
 
 ## HOW TO USE IT
 

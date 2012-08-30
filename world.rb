@@ -44,6 +44,7 @@ class World
         patch = Patch.new
         patch.land_cover_class = :deciduous
         patch.vole_population = patch.max_vole_pop
+        patch.site_index = 80
         patch.x, patch.y = x, y
         set_patch(x, y, patch)
       end
