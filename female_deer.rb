@@ -1,0 +1,58 @@
+require File.dirname(__FILE__) + '/deer'
+
+attr_accessor :in_euterus, :in_met_diestrus, :in_gestation, :in_lactation, :in_anestrus
+#TODO: set active_hours and movement_rates according to time of year or reproductive phase
+
+class FemaleDeer < Deer
+
+  def move
+    set_active_hours
+    t = 0
+    while t < self.active_hours
+      if in_estrus?
+        # if males in range, get preggers
+          t = t + 1
+        else
+          move
+          eat
+          t = t + (1 / movement_rate)
+        end
+      elsif in_met_diesrus?
+        eat
+        t = t + (1 / movement_rate)
+      elsif in_gestation?
+        # avoid others
+        # extra energy expendature
+        eat
+        t = t + (1 / movement_rate)
+      elsif in_lactation?
+        # extra energy expendature
+        eat
+        t = t + (1 / movement_rate)
+      elsif in_anestrus?
+        #normal behavior
+        eat
+        t = t + (1 / movement_rate)
+      else
+        raise ArgumentError, 'Current day of year is outside defined season ranges for deer (movement)'
+      end
+    end
+  end
+
+
+  def check_birth
+  end
+
+  def set_active_hours
+    if rut? 
+      self.active_hours = 12
+    elsif spring_summer?
+      self.active_hours = 8
+    else
+      self.active_hours = 6
+      # Default to fall_winter behavior
+      # raise ArgumentError, 'Current activity level is outside defined season ranges for deer'
+    end
+  end
+
+end

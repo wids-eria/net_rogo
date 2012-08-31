@@ -41,6 +41,12 @@ class Agent
   end
 
 
+  def individuals_in_radius
+    # TODO: finish this function
+    puts 'DEFINE INDIVIDUALS IN RADUS FUNCTION'
+  end
+
+
   def patch_ahead(distance)
     patch_x = Math::cos(heading.in_radians) * distance + x
     patch_y = Math::sin(heading.in_radians) * distance + y

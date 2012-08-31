@@ -11,6 +11,7 @@ class Deer < Agent
   attr_accessor :age, :energy, :previous_location, :heading, :spawned, :max_energy, :color
   attr_accessor :random_walk_suitable_count, :random_walk_unsuitable_count
   attr_accessor :suitable_neighborhood_selection_count, :backtrack_count
+  attr_accessor :movement_rate, :active_hours
 
 def initialize
     self.spawned = false
@@ -76,33 +77,36 @@ def initialize
 
 
   def go
-    forage
+    set_movement_rate
+    move
     bed
     mature
-    check_birth
+    # check_birth
     check_death
   end
 
-
-  def forage 
+  def set_movement_rate
     if rut?
-      eat
-    elsif growing_season?
-      eat
-    elsif winter?
-      eat
+
+    elsif spring_summer?
+
     else
-      raise ArgumentError, 'Current day of year is outside defined season ranges for deer'
+      # Default to fall_winter
+
+      #  raise Error, 'Current day of year is outside defined season ranges for deer (calculating movement rate)'
     end
   end
 
 
+
+
+
   def bed
     if rut?
-    elsif growing_season?
-    elsif winter?
+    elsif spring_summer?
     else
-      raise ArgumentError, 'Current day of year is outside defined season ranges for deer'
+      # Default to fall_winter behavior
+      # raise ArgumentError, 'Current day of year is outside defined season ranges for deer (bedding)'
     end
   end
 
@@ -123,10 +127,6 @@ def initialize
   end
 
 
-  def check_birth
-  end
-
-
   def check_death
   end
 
@@ -134,8 +134,17 @@ def initialize
 
 
   def rut?
-    (75..196).include? day_of_year
+    # Approximating from random website
+    (268..309).include? day_of_year
   end
+
+  def spring_summer?
+    (79..264).include? day_of_year
+  end
+
+  # def fall_winter?
+  #   if (265..267).include? day_of_year || (310..365).include? day_of_year || (0..78).include? day_of_year
+  # end
     
   def self.habitat_suitability_for(patch)
     HABITAT_ATTRIBUTES[patch.land_cover_class][:suitability]

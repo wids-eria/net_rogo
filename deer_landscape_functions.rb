@@ -78,11 +78,13 @@ module DeerLandscapeFunctions
 
 
  def browse_index
+   1
    #TODO: have to link to species-specific traits; upland/lowland x lcc?
  end
 
  
  def mast_index
+   1
    #TODO: also species specific (oak and beech); upland/lowland x lcc?
  end
 
