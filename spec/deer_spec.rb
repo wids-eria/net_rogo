@@ -13,9 +13,9 @@ describe MaleDeer do
     male_deer.tick
   end
 
-  it 'does 100 ticks' do
+  it 'does 365 ticks' do
     male_deer
-    100.times{ world.tick }
+    365.times{ world.tick }
   end
 
 #  describe "#forage_distance" do

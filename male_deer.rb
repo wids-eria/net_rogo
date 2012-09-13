@@ -9,6 +9,7 @@ class MaleDeer < Deer
     while t < self.active_hours
       if rut?
         if individuals_in_radius?
+          t = t + 1
         # if there are females right here
           # if energy is not too low
             # attempt to copulate
@@ -22,20 +23,25 @@ class MaleDeer < Deer
             # eat
             # t = t + (1 / rut_movement_rate)
         else
-          move
+          # change location
+          evaluate_neighborhood_for_forage
           eat
-          t = t + (1 / rut_movement_rate)
+          t = t + 1 
         end
       elsif spring_summer?
+        evaluate_neighborhood_for_forage
         eat
         t = t + 1
-      else
+      else 
+        evaluate_neighborhood_for_forage
         eat
+        t = t + 1
       # else
       #   raise ArgumentError, 'Current day of year is outside defined season ranges for deer (movement)'
-        t = t + 1
       end
     end
+    evaluate_neighborhood_for_bedding
+    move_to_cover
   end
 
   def set_active_hours

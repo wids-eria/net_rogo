@@ -24,7 +24,7 @@ def initialize
     self.color = Color::HSL.new(rand * 360, 100, 30)
  end
 
-  def self.spawn_population(world, count = 100)
+  def self.spawn_population(world, count = 10)
     patches_for_spawning = world.all_patches.select{|patch| can_spawn_on? patch}
     raise 'wat' if patches_for_spawning.empty?
     count.times.collect do
@@ -37,7 +37,6 @@ def initialize
 
     deer = self.new
     deer.location = [x,y]
-    deer.previous_location = [x,y]
 
     deer.world = world
     world.deers << deer
@@ -51,23 +50,23 @@ def initialize
     spawned.nil? || !spawned
   end
 
-  HABITAT_ATTRIBUTES = { open_water:                  {suitability: -1, forest_type_index: 0},
-                         developed_open_space:        {suitability: 1,  forest_type_index: 0},
-                         developed_low_intensity:     {suitability: 1,  forest_type_index: 0},
-                         developed_medium_intensity:  {suitability: 0,  forest_type_index: 0},
-                         developed_high_intensity:    {suitability: 0,  forest_type_index: 0},
-                         barren:                      {suitability: 0,  forest_type_index: 0},
-                         deciduous:                   {suitability: 1,  forest_type_index: 0},
-                         coniferous:                  {suitability: 1,  forest_type_index: 1},
-                         mixed:                       {suitability: 1,  forest_type_index: 0.5},
-                         dwarf_scrub:                 {suitability: 1,  forest_type_index: 0},
-                         shrub_scrub:                 {suitability: 1,  forest_type_index: 0},
-                         grassland_herbaceous:        {suitability: 1,  forest_type_index: 0},
-                         pasture_hay:                 {suitability: 1,  forest_type_index: 0},
-                         cultivated_crops:            {suitability: 1,  forest_type_index: 0},
-                         forested_wetland:            {suitability: 1,  forest_type_index: 0},
-                         emergent_herbaceous_wetland: {suitability: 1,  forest_type_index: 0},
-                         excluded:                    {suitability: -1, forest_type_index: 0} }
+  HABITAT_ATTRIBUTES = { open_water:                  {suitability: -1, forest_type_index: 0, visibility: 0},
+                         developed_open_space:        {suitability: 1,  forest_type_index: 0, visibility: 2},
+                         developed_low_intensity:     {suitability: 1,  forest_type_index: 0, visibility: 1},
+                         developed_medium_intensity:  {suitability: 0,  forest_type_index: 0, visibility: 1},
+                         developed_high_intensity:    {suitability: 0,  forest_type_index: 0, visibility: 1},
+                         barren:                      {suitability: 0,  forest_type_index: 0, visibility: 2},
+                         deciduous:                   {suitability: 1,  forest_type_index: 0, visibility: 1},
+                         coniferous:                  {suitability: 1,  forest_type_index: 1, visibility: 1},
+                         mixed:                       {suitability: 1,  forest_type_index: 0.5, visibility: 1},
+                         dwarf_scrub:                 {suitability: 1,  forest_type_index: 0, visibility: 2},
+                         shrub_scrub:                 {suitability: 1,  forest_type_index: 0, visibility: 2},
+                         grassland_herbaceous:        {suitability: 1,  forest_type_index: 0, visibility: 2},
+                         pasture_hay:                 {suitability: 1,  forest_type_index: 0, visibility: 2},
+                         cultivated_crops:            {suitability: 1,  forest_type_index: 0, visibility: 1},
+                         forested_wetland:            {suitability: 1,  forest_type_index: 0, visibility: 1},
+                         emergent_herbaceous_wetland: {suitability: 1,  forest_type_index: 0, visibility: 2},
+                         excluded:                    {suitability: -1, forest_type_index: 0, visibility: 0}}
 
 
   def tick
@@ -78,6 +77,7 @@ def initialize
 
   def go
     set_movement_rate
+    # puts world.day_of_year
     move
     bed
     mature
@@ -86,15 +86,16 @@ def initialize
   end
 
   def set_movement_rate
-    if rut?
+   self.movement_rate = 6
+   #if rut?
+   #  movement_rate = 6.5
+   #elsif spring_summer?
 
-    elsif spring_summer?
-
-    else
-      # Default to fall_winter
-
-      #  raise Error, 'Current day of year is outside defined season ranges for deer (calculating movement rate)'
-    end
+   #else
+   #  # Default to fall_winter
+   #  movement_rate = 6
+   #  #  raise Error, 'Current day of year is outside defined season ranges for deer (calculating movement rate)'
+   #end
   end
 
 
@@ -111,10 +112,17 @@ def initialize
   end
 
 
-  def move
-    evaluate_neigborhood
-    set_target
-    move_to_target
+  def evaluate_neighborhood_for_forage
+    # assess local neighborhood during foraging
+  end
+
+
+  def move_to_cover
+    # evaluate_steps; permits longer term decision analysis
+  end
+
+
+  def evaluate_neighborhood_for_bedding
   end
 
 
@@ -135,15 +143,15 @@ def initialize
 
   def rut?
     # Approximating from random website
-    (268..309).include? day_of_year
+    (268..309).include? world.day_of_year
   end
 
   def spring_summer?
-    (79..264).include? day_of_year
+    (79..264).include? world.day_of_year
   end
 
   # def fall_winter?
-  #   if (265..267).include? day_of_year || (310..365).include? day_of_year || (0..78).include? day_of_year
+  #   if (265..267).include? world.day_of_year || (310..365).include? world.day_of_year || (0..78).include? world.day_of_year
   # end
     
   def self.habitat_suitability_for(patch)
@@ -166,4 +174,14 @@ def initialize
     self.class.passable? patch
   end
 
+
+  def evaluate_steps
+    immediate_neighborhood = neigborhood_in_radius 1
+    first_order_steps = immediate_neighborhood.collect
+    HABITAT_ATTRIBUTES[patch.land_cover_class][:suitability]
+    HABITAT_ATTRIBUTES[patch.land_cover_class][:visibility]
+  end
+
+  def execute_move_sequence
+  end
 end

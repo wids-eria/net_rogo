@@ -41,9 +41,9 @@ class Agent
   end
 
 
-  def individuals_in_radius
+  def individuals_in_radius?
     # TODO: finish this function
-    puts 'DEFINE INDIVIDUALS IN RADUS FUNCTION'
+    puts 'DEFINE INDIVIDUALS IN RADIUS FUNCTION'
   end
 
 

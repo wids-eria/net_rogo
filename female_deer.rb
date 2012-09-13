@@ -10,7 +10,8 @@ class FemaleDeer < Deer
     t = 0
     while t < self.active_hours
       if in_estrus?
-        # if males in range, get preggers
+        if males_in_range?
+          get_preggers
           t = t + 1
         else
           move
