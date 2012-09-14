@@ -1,3 +1,5 @@
+require 'set'
+
 class Patch
   
   require File.dirname(__FILE__) + '/deer_landscape_functions'
@@ -59,8 +61,21 @@ class Patch
     self.deer_fall_winter_food = 0
     self.deer_spring_summer_food = 0
     self.deer_thermal_cover = 0
+    @agents = Set.new
   end
 
+  def add_agent(agent)
+    @agents<<agent unless agents.member? agent
+  end
+  
+  def remove_agent(agent)
+    @agents.delete agent
+  end
+  
+  def agents
+    @agents.to_a
+  end
+  
   def tick
     age_and_expire_scents
     grow_voles

@@ -14,14 +14,15 @@ class Deer < Agent
   attr_accessor :movement_rate, :active_hours
 
 def initialize
-    self.spawned = false
-    self.energy = 0
-    self.age = 0
-    self.location = [0.0, 0.0]
-    self.heading = 0.0
-    self.max_energy = MAX_ENERGY
+  super
+  self.spawned = false
+  self.energy = 0
+  self.age = 0
+  self.location = [0.0, 0.0]
+  self.heading = 0.0
+  self.max_energy = MAX_ENERGY
 
-    self.color = Color::HSL.new(rand * 360, 100, 30)
+  self.color = Color::HSL.new(rand * 360, 100, 30)
  end
 
   def self.spawn_population(world, count = 10)
