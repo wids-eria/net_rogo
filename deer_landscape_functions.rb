@@ -76,6 +76,9 @@ module DeerLandscapeFunctions
     end
  end
 
+ def browse_availability_index
+   0
+ end
 
  def browse_index
    (browse_quality_index + browse_availability_index) / 2
@@ -87,6 +90,7 @@ module DeerLandscapeFunctions
    # ideally early or late successional lowland conifers; for now we'll just say coniferous below or above certain BA
    if HABITAT_ATTRIBUTES[self.land_cover_class]
    end
+   0
  end
  
  def mast_index
