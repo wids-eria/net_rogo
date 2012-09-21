@@ -114,7 +114,11 @@ def initialize
 
 
   def evaluate_neighborhood_for_forage
-    # assess local neighborhood during foraging
+    if spring_summer?
+      assess_spring_summer_food_potential
+    else
+      assess_fall_winter_potential
+    end
   end
 
 

@@ -1,27 +1,33 @@
 require File.dirname(__FILE__) + '/deer'
+require File.dirname(__FILE__) + '/deer_landscape_functions'
+
 
 class MaleDeer < Deer
 #TODO: set active_hours and movement_rates according to time of year or reproductive phase
 
+  include DeerLandscapeFunctions
+  
+  attr_accessor :min_male_reproductive_energy
+  
   def move 
     set_active_hours
     t = 0
     while t < self.active_hours
       if rut?
-        if individuals_in_radius?
+        if agents_in_radius_of_type(1, female_deer)        # if females around
           t = t + 1
-        # if there are females right here
-          # if energy is not too low
-            # attempt to copulate
-              # if there are males to compete with
-                # male with greater energy wins rights, other moves on
-                # if won, attempt to mate
-                # if female receptive, female becomes pregnant
-            # t = t + 1
-          # elsif there are females within range
-            # move towards females
-            # eat
-            # t = t + (1 / rut_movement_rate)
+          if agents_in_radius_of_type(1, male_deer)
+            # compete
+          else
+            if self.energy > min_male_reproductive_energy
+              # try to get lady preggers
+            else
+              eat
+            end
+          end
+        elsif agents_in_radius_of_type(2, female_deer)
+          # move towards one of females (preferably receptive ones)
+          # t = t + (1 / rut_movement_rate)
         else
           # change location
           evaluate_neighborhood_for_forage
@@ -32,7 +38,7 @@ class MaleDeer < Deer
         evaluate_neighborhood_for_forage
         eat
         t = t + 1
-      else 
+      else # fall by default 
         evaluate_neighborhood_for_forage
         eat
         t = t + 1

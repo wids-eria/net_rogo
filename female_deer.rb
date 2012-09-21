@@ -10,8 +10,8 @@ class FemaleDeer < Deer
     t = 0
     while t < self.active_hours
       if in_estrus?
-        if males_in_range?
-          get_preggers
+        if agents_in_radius_of_type(1, male_deer)
+          set in_met_diesrus = True
           t = t + 1
         else
           move
@@ -54,6 +54,24 @@ class FemaleDeer < Deer
       # Default to fall_winter behavior
       # raise ArgumentError, 'Current activity level is outside defined season ranges for deer'
     end
+  end
+
+  def in_estrus?
+  end
+
+  def in_met_diesrus?
+    (1..).include? self.pregnancy_clock
+  end
+
+  def in_gestation?
+    (1..).include? self.pregnancy_clock
+  end
+  
+  def in_lactation?
+  end
+
+  def in_anestrus?
+    
   end
 
 end

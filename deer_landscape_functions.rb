@@ -78,10 +78,16 @@ module DeerLandscapeFunctions
 
 
  def browse_index
-   1
+   (browse_quality_index + browse_availability_index) / 2
    #TODO: have to link to species-specific traits; upland/lowland x lcc?
  end
 
+ def browse_quality_index
+   # 0-1 ranking based on palatability and nutrition of species (Thuja occidentalis = 1, Abies balsema = 0.25, fill in the rest)
+   # ideally early or late successional lowland conifers; for now we'll just say coniferous below or above certain BA
+   if HABITAT_ATTRIBUTES[self.land_cover_class]
+   end
+ end
  
  def mast_index
    1
