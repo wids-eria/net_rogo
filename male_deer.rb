@@ -1,11 +1,9 @@
 require File.dirname(__FILE__) + '/deer'
-require File.dirname(__FILE__) + '/deer_landscape_functions'
 
 
 class MaleDeer < Deer
 #TODO: set active_hours and movement_rates according to time of year or reproductive phase
 
-  include DeerLandscapeFunctions
   
   attr_accessor :min_male_reproductive_energy
   
@@ -14,7 +12,7 @@ class MaleDeer < Deer
     t = 0
     while t < self.active_hours
       if rut?
-        if agents_in_radius_of_type(1, female_deer)        # if females around
+        if agents_in_radius_of_type(1, 'female_deer')        # if females around
           t = t + 1
           if agents_in_radius_of_type(1, male_deer)
             # compete

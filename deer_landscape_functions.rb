@@ -1,6 +1,6 @@
 module DeerLandscapeFunctions
   
-    HABITAT_ATTRIBUTES = { open_water:                {suitability: -1, forest_type_index: 0,   forest: 0},
+    EXTENDED_HABITAT_ATTRIBUTES = { open_water:                {suitability: -1, forest_type_index: 0,   forest: 0},
                          developed_open_space:        {suitability: 1,  forest_type_index: 0,   forest: 0},
                          developed_low_intensity:     {suitability: 1,  forest_type_index: 0,   forest: 0},
                          developed_medium_intensity:  {suitability: 0,  forest_type_index: 0,   forest: 0},
@@ -21,7 +21,7 @@ module DeerLandscapeFunctions
   
   def assess_thermal_cover
     #forest_composition_index x forest_structure_index x site_productivity_index
-    forest_type_index = HABITAT_ATTRIBUTES[self.land_cover_class][:forest_type_index]
+    forest_type_index = EXTENDED_HABITAT_ATTRIBUTES[self.land_cover_class][:forest_type_index]
     if forest_type_index > 0
       thermal_index = forest_composition_index * forest_structure_index * site_productivity_index
     else
@@ -30,7 +30,7 @@ module DeerLandscapeFunctions
   end
 
  def forest_composition_index
-   forest_type_index = HABITAT_ATTRIBUTES[patch.land_cover_class][:forest_type_index]
+   forest_type_index = EXTENDED_HABITAT_ATTRIBUTES[patch.land_cover_class][:forest_type_index]
    # TODO: currently cannot differentiate between conifer types; would be useful to implement general moisture regime (mesic/xeric)
      # Northern Hemlock, White Cedar = 1 (lowland/mesic conifers)
      # spruce and fir = 0.8 (woody wetlands)
@@ -68,7 +68,7 @@ module DeerLandscapeFunctions
 
  def assess_fall_winter_food_potential
     #forest_composition_index x forest_structure_index x site_productivity_index
-    forest_index = HABITAT_ATTRIBUTES[self.land_cover_class][:forest]
+    forest_index = EXTENDED_HABITAT_ATTRIBUTES[self.patch.land_cover_class][:forest]
     if forest_index > 0
       fall_winter_food_index = (2 * browse_index + mast_index) * 3 * site_productivity_index 
     else
@@ -88,7 +88,7 @@ module DeerLandscapeFunctions
  def browse_quality_index
    # 0-1 ranking based on palatability and nutrition of species (Thuja occidentalis = 1, Abies balsema = 0.25, fill in the rest)
    # ideally early or late successional lowland conifers; for now we'll just say coniferous below or above certain BA
-   if HABITAT_ATTRIBUTES[self.land_cover_class]
+   if EXTENDED_HABITAT_ATTRIBUTES[self.patch.land_cover_class]
    end
    0
  end
@@ -101,7 +101,7 @@ module DeerLandscapeFunctions
 
  def assess_spring_summer_food_potential
     #forest_composition_index x forest_structure_index x site_productivity_index
-    forest_index = HABITAT_ATTRIBUTES[self.land_cover_class][:forest]
+    forest_index = EXTENDED_HABITAT_ATTRIBUTES[self.patch.land_cover_class][:forest]
     if forest_index > 0
       spring_summer_food_index = vegetation_type_index * successional_stage_index * site_productivity_index
     else
@@ -114,11 +114,11 @@ module DeerLandscapeFunctions
    # upland deciduous and mixed = 1
    # upland coniferous = 0.4
    # lowland (aquatic emergent plants) = 0.2 - probably just wetlands (woody and herbacious)
-  if self.land_cover_class = :deciduous or :mixed
+  if self.patch.land_cover_class = :deciduous or :mixed
      1
-   elsif self.land_cover_class = :coniferous
+   elsif self.patch.land_cover_class = :coniferous
      0.4
-   elsif self.land_cover_class = :forested_wetland or :emergent_herbacious_wetlands
+   elsif self.patch.land_cover_class = :forested_wetland or :emergent_herbacious_wetlands
      0.2
    else
      0
@@ -140,6 +140,6 @@ module DeerLandscapeFunctions
  def site_productivity_index
    # TODO: tie max_site_index to stricter number
    max_site_index = 100
-   self.site_index/max_site_index 
+   self.patch.site_index / max_site_index 
  end
 end

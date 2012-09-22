@@ -18,6 +18,20 @@ describe MaleDeer do
     365.times{ world.tick }
   end
 
+  it 'dies' do
+    puts 10.times.collect{(365*male_deer.active_hours*20).times.select{ male_deer.die_from_random_trial? }.count}.mean
+  end
+
+  it 'moves'
+  it 'chases ladies during rut'
+  it 'picks a destination after evaluating the neighborhood'
+  # base decision on percieved food content of patch
+  it 'seeks thermal cover in winter'
+
+
+  # Mabes
+  it 'moves to cover at the end of the day'
+
 #  describe "#forage_distance" do
 #    it "is 1000 meters per hour" do
 #      male_marten.forage_distance.should be_within(0.001).of(15.7183)

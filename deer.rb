@@ -1,13 +1,18 @@
 require File.dirname(__FILE__) + '/agent'
+require File.dirname(__FILE__) + '/deer_landscape_functions'
+
 #require 'logger'
 
 $log = Logger.new("deer_events.log")
 
 class Deer < Agent
 
+  include DeerLandscapeFunctions
+  
   MAX_ENERGY = 100
 
  # NEED TO ADD PERSISTENT VARIABLES:
+  attr_accessor :x, :y, :world
   attr_accessor :age, :energy, :previous_location, :heading, :spawned, :max_energy, :color
   attr_accessor :random_walk_suitable_count, :random_walk_unsuitable_count
   attr_accessor :suitable_neighborhood_selection_count, :backtrack_count
@@ -39,6 +44,7 @@ def initialize
     deer = self.new
     deer.location = [x,y]
 
+
     deer.world = world
     world.deers << deer
 
@@ -51,23 +57,23 @@ def initialize
     spawned.nil? || !spawned
   end
 
-  HABITAT_ATTRIBUTES = { open_water:                  {suitability: -1, forest_type_index: 0, visibility: 0},
-                         developed_open_space:        {suitability: 1,  forest_type_index: 0, visibility: 2},
-                         developed_low_intensity:     {suitability: 1,  forest_type_index: 0, visibility: 1},
-                         developed_medium_intensity:  {suitability: 0,  forest_type_index: 0, visibility: 1},
-                         developed_high_intensity:    {suitability: 0,  forest_type_index: 0, visibility: 1},
-                         barren:                      {suitability: 0,  forest_type_index: 0, visibility: 2},
-                         deciduous:                   {suitability: 1,  forest_type_index: 0, visibility: 1},
-                         coniferous:                  {suitability: 1,  forest_type_index: 1, visibility: 1},
-                         mixed:                       {suitability: 1,  forest_type_index: 0.5, visibility: 1},
-                         dwarf_scrub:                 {suitability: 1,  forest_type_index: 0, visibility: 2},
-                         shrub_scrub:                 {suitability: 1,  forest_type_index: 0, visibility: 2},
-                         grassland_herbaceous:        {suitability: 1,  forest_type_index: 0, visibility: 2},
-                         pasture_hay:                 {suitability: 1,  forest_type_index: 0, visibility: 2},
-                         cultivated_crops:            {suitability: 1,  forest_type_index: 0, visibility: 1},
-                         forested_wetland:            {suitability: 1,  forest_type_index: 0, visibility: 1},
-                         emergent_herbaceous_wetland: {suitability: 1,  forest_type_index: 0, visibility: 2},
-                         excluded:                    {suitability: -1, forest_type_index: 0, visibility: 0}}
+  HABITAT_ATTRIBUTES = { open_water:                  {suitability: -1, forest_type_index: 0, visibility: 0, forest: 0},
+                         developed_open_space:        {suitability: 1,  forest_type_index: 0, visibility: 2, forest: 0},
+                         developed_low_intensity:     {suitability: 1,  forest_type_index: 0, visibility: 1, forest: 0},
+                         developed_medium_intensity:  {suitability: 0,  forest_type_index: 0, visibility: 1, forest: 0},
+                         developed_high_intensity:    {suitability: 0,  forest_type_index: 0, visibility: 1, forest: 0},
+                         barren:                      {suitability: 0,  forest_type_index: 0, visibility: 2, forest: 0},
+                         deciduous:                   {suitability: 1,  forest_type_index: 0, visibility: 1, forest: 1},
+                         coniferous:                  {suitability: 1,  forest_type_index: 1, visibility: 1, forest: 1},
+                         mixed:                       {suitability: 1,  forest_type_index: 0.5, visibility: 1, forest: 1},
+                         dwarf_scrub:                 {suitability: 1,  forest_type_index: 0, visibility: 2, forest: 0},
+                         shrub_scrub:                 {suitability: 1,  forest_type_index: 0, visibility: 2, forest: 0},
+                         grassland_herbaceous:        {suitability: 1,  forest_type_index: 0, visibility: 2, forest: 0},
+                         pasture_hay:                 {suitability: 1,  forest_type_index: 0, visibility: 2, forest: 0},
+                         cultivated_crops:            {suitability: 1,  forest_type_index: 0, visibility: 1, forest: 0},
+                         forested_wetland:            {suitability: 1,  forest_type_index: 0, visibility: 1, forest: 1},
+                         emergent_herbaceous_wetland: {suitability: 1,  forest_type_index: 0, visibility: 2, forest: 0},
+                         excluded:                    {suitability: -1, forest_type_index: 0, visibility: 0, forest: 0}}
 
 
   def tick
@@ -117,7 +123,7 @@ def initialize
     if spring_summer?
       assess_spring_summer_food_potential
     else
-      assess_fall_winter_potential
+      assess_fall_winter_food_potential
     end
   end
 
@@ -189,4 +195,17 @@ def initialize
 
   def execute_move_sequence
   end
+
+  def die_from_mortality_trial?
+    rand > mortality_probability
+  end
+
+  def mortality_probability
+    if self.patch.land_cover_class == :developed_low_intensity 
+      (rand 0.20 + 0.62) ^ (1 / 365)
+    else
+     (rand 0.19 + 0.57) ^ (1 / 365) 
+    end
+  end
+
 end

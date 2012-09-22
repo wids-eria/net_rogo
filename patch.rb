@@ -79,7 +79,6 @@ class Patch
   def tick
     age_and_expire_scents
     grow_voles
-    calculate_deer_metrics
   end
 
   def location
