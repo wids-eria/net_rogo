@@ -6,7 +6,6 @@ attr_accessor :in_euterus, :in_met_diestrus, :in_gestation, :in_lactation, :in_a
 class FemaleDeer < Deer
 
   def move
-    set_active_hours
     t = 0
     while t < self.active_hours
       if in_estrus?
@@ -44,13 +43,13 @@ class FemaleDeer < Deer
   def check_birth
   end
 
-  def set_active_hours
+  def active_hours
     if rut? 
-      self.active_hours = 12
+      12
     elsif spring_summer?
-      self.active_hours = 8
+      8
     else
-      self.active_hours = 6
+      6
       # Default to fall_winter behavior
       # raise ArgumentError, 'Current activity level is outside defined season ranges for deer'
     end

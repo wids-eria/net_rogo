@@ -9,6 +9,8 @@ describe MaleDeer do
     male_deer.location = [1.5, 1.5]
   end
 
+# describe and before executed immediately prior to each it (to set it up)
+
   it 'ticks' do
     male_deer.tick
   end
@@ -19,7 +21,7 @@ describe MaleDeer do
   end
 
   it 'dies' do
-    puts 10.times.collect{(365*male_deer.active_hours*20).times.select{ male_deer.die_from_random_trial? }.count}.mean
+    puts 10.times.collect{(365*male_deer.active_hours*20).times.select{ male_deer.die_from_mortality_trial? }.count}.mean
   end
 
   it 'counts the number of agents around it'

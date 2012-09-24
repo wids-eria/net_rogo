@@ -16,7 +16,7 @@ class Deer < Agent
   attr_accessor :age, :energy, :previous_location, :heading, :spawned, :max_energy, :color
   attr_accessor :random_walk_suitable_count, :random_walk_unsuitable_count
   attr_accessor :suitable_neighborhood_selection_count, :backtrack_count
-  attr_accessor :movement_rate, :active_hours
+  attr_accessor :movement_rate
 
 def initialize
   super

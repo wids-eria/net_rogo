@@ -1,38 +1,39 @@
-## WHAT IS IT?
+## PURPOSE
 
-(a general understanding of what the model is trying to show or explain)
+The purpose of this model is to evaluate how populations of white-tailed deer (\textit{Odocoileus virginianus}) respond to various types of land use changes. Land use change can either be driven by player decisions in the Trails Forward video game, or prescribed based on user requirements.
 
-## HOW IT WORKS
+## ENTITIES, STATE VARIABLES, AND SCALES
+
+1) Male deer - Male deer are described using a number of state variables, which include age (measured in days), 
+
+2) Female deer
+
+3) Food source
+
+## PROCESS OVERVIEW AND SCHEDULING
 
 (what rules the agents use to create the overall behavior of the model)
 
-Deer have two primary modes; active and resting. Typically the active period of this diurnal cycle consists of moving and foraging, while resting consists of bedding down in locations which meet the thermal and cover needs of the individual. Specific behaviors during these two basic modes are further modified by the time of year, which is broken down into three primary seasons; spring/summer, rut, and fall/winter. The spring/summer season lasts from the first dday of spring to the last day of summer, the rut lasts for four(?) weeks following the spring/summer season, and the fall/winter season lasts from the end of the rut to the first day of spring.
+Deer have two primary modes; active and resting. Typically the active period of this diurnal cycle consists of moving and foraging, while resting consists of bedding down in locations which meet the thermal and cover needs of the individual. Specific behaviors during these two basic modes are further modified by the time of year, which is broken down into three primary seasons; spring/summer, rut, and fall/winter. The spring/summer season lasts from the first day of spring to the last day of summer, the rut lasts for four(?) weeks following the spring/summer season, and the fall/winter season lasts from the end of the rut to the first day of spring.
 
-In the spring/summer season, deer rely primarily on herbacious vegetation for nutrition. Their diet during this period consists primarily of young aspen and (...), which is reflected in the spring/summer habitat potential algorithm. During this period they roam widely, with females traveling approximately 2.5 km per day, and males up to 6.1 km per day. Bedding location during this period is selected primarily with the intention of reducing predation.
+In the spring/summer season, deer rely primarily on herbaceous vegetation and young aspen for sustenance, which is reflected in the spring/summer habitat potential algorithm. During this period they roam widely, with females traveling approximately 2.5 km per day, and males up to 6.1 km per day. Their movement is predicated on what they perceive to be the best potential food source in the immediate area based on a number of features (ie. cover type and forest seral stage), but are not directly linked to the quantity of food source present at the location.
 
-In the fall/winter season, deer rely more heavily on woody browse and mast from oaks and beech, reflected by the fall/winter habitat potential algorithm. This browse is less nutritious than that of the spring/summer season, and the weight of individuals can decrease even if this food source is relatively plentiful. Bedding locations during this period largely reflect the desire for reduced exposure, reflected in the thermal cover potential algorithm.
+In the fall/winter season, deer rely more heavily on woody browse and mast from oaks and beech, reflected by the fall/winter habitat potential algorithm. This browse is less nutritious than that of the spring/summer season, and the weight of individuals can decrease even if this food source is relatively plentiful. A similar approach to assessing landscape features is used to determine movement. In addition, during this season the deer act in more of a central-place foraging mode, returning each night to 'deer yards', which offer reduced exposure to the elements. The selection of these areas reflected in the thermal cover potential algorithm.
 
 During the rut, males travel further (up to ~7.4 km per day), primarily with the intention of impregnating as many females as possible during this time, and a lesser focus on eating. Females may enter estrus during this period, at which time they may become impregnated by a buck. Competition may occur for unimpregnated females in estrus, with the winner being determined as a function of individual health (as indicated by weight) and some measure of chance (see mate competition algorithm [not yet described])
 
-
-DIURNAL VARIATION - 
- - tend to actively feed primarily around twilight, activity period extended during late summer
-   - during feeding
-     - move to areas of high food resource (generally open areas during the growing season, deciduous forest in early spring and winter)
-     - response to other individuals depends on what type of habitat they are in (dispersed vs. clumped aggregation)
-   - when not feeding
-     - seek cover (thicker cover types, dense young(?) forest)
-     - again, respond differently to other deer based on visibility of current cover type)
-
-
-Mortality of individuals at this point will be determined probabilistically as a function of the amount of time spent in different habitats (exposure), season, life stage (fawn/adult) and and their energy budget.
+Mortality of individuals at this point will be determined probabilistically as a function of the amount of time spent in different habitats (exposure), season, life stage (fawn/adult) and their energy budget.
 
 Food resource will be modeled as a logistic growth function that changes as a function of the current day of year, and discounted according to either the spring/summer or fall/winter habitat potential rating.
 
 ### Potential distance view algorithm
 Each individual movement action is determined by evaluating a number of paths from the current location to surrounding locations. The number and length of these paths is dependent on the visibility ranking of surrounding patches. The algorithm begins by evaluating the suitability and visibility of the first order neighborhood (surrounding nine cells). This first pass represents the set of possible paths with a distance of 1 cell. If the visibility of any of these 1st order paths terminates in a cell with visibility greater than 1, then a set of second order paths are also added to the array for consideration. These second order paths consist of the potential end locations immediately accessible from those cells in the immediate neighborhood with a distance value of > 1. This creates a set of possible paths with no more than 16 unique possible endpoints. The destination is set as that tile in the array of candidates with the highest suitability, and the individual is relocated to that position. If there is a tie between two or more tiles for the most suitable, one of those with the highest suitability score will be selected from random. Note: paths with a distance of two should incur double the time cost.
 
-## HOW TO USE IT
+--OR--
+
+A view distance is specified for each cover type, and is carried as a patch attribute. The radius in which a deer can perceive its surroundings is then determined by its immediate patch, irregardless of the qualities of the surrounding patches.
+
+HOW TO USE IT
 
 (how to use the model, including a description of each of the items in the Interface tab)
 
