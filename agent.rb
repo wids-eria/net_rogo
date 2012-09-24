@@ -145,9 +145,7 @@ class Agent
   end
   
   def agents_in_radius(radius)
-    patches_in_radius = #
-    unflattened_list_of_agents = patches_in_radius.map(do |patch| patch.agents end) # Ben's version
-#    unflattened_list_of_agents = patches_in_radius.collect{|patch| patch.agents }  # My failed attempt at repair
+    unflattened_list_of_agents = world.patches_in_radius(self.x, self.y, 1).map{|patch| patch.agents} 
     unflattened_list_of_agents.flatten
   end
   

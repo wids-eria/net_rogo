@@ -14,7 +14,7 @@ class MaleDeer < Deer
       if rut?
         if agents_in_radius_of_type(1, 'female_deer')        # if females around
           t = t + 1
-          if agents_in_radius_of_type(1, male_deer)
+          if agents_in_radius_of_type(1, 'male_deer')
             # compete
           else
             if self.energy > min_male_reproductive_energy

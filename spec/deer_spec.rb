@@ -22,6 +22,7 @@ describe MaleDeer do
     puts 10.times.collect{(365*male_deer.active_hours*20).times.select{ male_deer.die_from_random_trial? }.count}.mean
   end
 
+  it 'counts the number of agents around it'
   it 'moves'
   it 'chases ladies during rut'
   it 'picks a destination after evaluating the neighborhood'
