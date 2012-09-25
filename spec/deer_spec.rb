@@ -21,7 +21,10 @@ describe MaleDeer do
   end
 
   it 'dies' do
-    puts 10.times.collect{(365*male_deer.active_hours*20).times.select{ male_deer.die_from_mortality_trial? }.count}.mean
+    puts 1000.times.collect{(365*male_deer.active_hours).times.select{ male_deer.die_from_mortality_trial? }.count}.mean
+    #1000000000.times do
+    #  raise 'whee' if male_deer.die_from_mortality_trial?
+    #end
   end
 
   it 'counts the number of agents around it'

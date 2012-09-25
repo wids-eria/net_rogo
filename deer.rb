@@ -202,9 +202,9 @@ def initialize
 
   def mortality_probability
     if self.patch.land_cover_class == :developed_low_intensity 
-      (rand 0.20 + 0.62) ^ (1 / 365)
+      ((rand * 0.20) + 0.62) ** (1.0 / 365)
     else
-     (rand 0.19 + 0.57) ^ (1 / 365) 
+     ((rand * 0.19) + 0.57) ** (1.0 / 365) 
     end
   end
 
