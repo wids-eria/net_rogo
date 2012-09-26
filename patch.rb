@@ -65,7 +65,7 @@ class Patch
   end
 
   def add_agent(agent)
-    @agents<<agent unless agents.member? agent
+    @agents << agent unless agents.member? agent
   end
   
   def remove_agent(agent)

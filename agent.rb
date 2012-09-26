@@ -77,12 +77,6 @@ class Agent
   end
 
 
-  def individuals_in_radius?
-    # TODO: finish this function
-    puts 'DEFINE INDIVIDUALS IN RADIUS FUNCTION'
-  end
-
-
   def patch_ahead(distance)
     patch_x = Math::cos(heading.in_radians) * distance + x
     patch_y = Math::sin(heading.in_radians) * distance + y
@@ -146,7 +140,9 @@ class Agent
   
   def agents_in_radius(radius)
     unflattened_list_of_agents = world.patches_in_radius(self.x, self.y, 1).map{|patch| patch.agents} 
-    unflattened_list_of_agents.flatten
+    flattened_list_of_agents = unflattened_list_of_agents.flatten
+    flattened_list_of_agents.delete self
+    flattened_list_of_agents
   end
   
   def agents_in_radius_of_type(radius, type)

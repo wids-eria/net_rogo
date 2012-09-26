@@ -12,7 +12,7 @@ class Deer < Agent
   MAX_ENERGY = 100
 
  # NEED TO ADD PERSISTENT VARIABLES:
-  attr_accessor :x, :y, :world
+  attr_accessor :world
   attr_accessor :age, :energy, :previous_location, :heading, :spawned, :max_energy, :color
   attr_accessor :random_walk_suitable_count, :random_walk_unsuitable_count
   attr_accessor :suitable_neighborhood_selection_count, :backtrack_count
@@ -23,7 +23,6 @@ def initialize
   self.spawned = false
   self.energy = 0
   self.age = 0
-  self.location = [0.0, 0.0]
   self.heading = 0.0
   self.max_energy = MAX_ENERGY
 
@@ -42,10 +41,9 @@ def initialize
   def self.spawn_at(world,x,y)
 
     deer = self.new
-    deer.location = [x,y]
-
-
     deer.world = world
+
+    deer.location = [x,y]
     world.deers << deer
 
     deer.energy = deer.max_energy
