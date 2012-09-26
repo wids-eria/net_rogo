@@ -14,6 +14,7 @@ class Patch
   attr_accessor :vole_population
   attr_accessor :deer_browse
   attr_accessor :deer_fall_winter_food, :deer_spring_summer_food, :deer_thermal_cover
+  attr_accessor :basal_area
 
   MAX_VOLE_POP = 13.9
   UNHINDERED_VOLE_GROWTH_RATE = 0.00344

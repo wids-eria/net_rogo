@@ -118,11 +118,15 @@ def initialize
 
 
   def evaluate_neighborhood_for_forage
-    if spring_summer?
-      assess_spring_summer_food_potential
-    else
-      assess_fall_winter_food_potential
+    surrounding_options = neighborhood_in_radius(1).collect
+    surrounding_options.sort_by do |patch|
+      if spring_summer?
+        assess_spring_summer_food_potential(patch)
+      else
+        assess_fall_winter_food_potential(patch)
+      end
     end
+    surrounding_options[0] # should return first element of array, which should now be sorted by season-specific food_index
   end
 
 
