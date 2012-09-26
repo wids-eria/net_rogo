@@ -118,16 +118,18 @@ def initialize
 
 
   def evaluate_neighborhood_for_forage
-    surrounding_options = neighborhood_in_radius(1).collect
-    surrounding_options.sort_by do |patch|
-      if spring_summer?
-        assess_spring_summer_food_potential(patch)
-      else
-        assess_fall_winter_food_potential(patch)
-      end
-    end
-    surrounding_options[0] # should return first element of array, which should now be sorted by season-specific food_index
+    select_highest_score_of_patch_set(neighborhood_in_radius(1))
   end
+
+  def select_highest_score_of_patch_set(patch_set) # need to figure out how to sort patch_set based on evaluation of food potential
+    if spring_summer?
+      patch_set.sort { |x, y| assess_spring_summer_food_potential(x) <=> assess_spring_summer_food_potential(y) }
+    else
+      patch_set.sort { |x, y| assess_fall_winter_food_potential(x) <=> assess_fall_winter_food_potential(y) }
+    end
+    patch_set[0]                        # should return first element of array, which should now be sorted by season-specific food_index
+  end
+ 
 
 
   def move_to_cover

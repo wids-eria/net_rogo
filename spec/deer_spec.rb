@@ -173,6 +173,9 @@ describe MaleDeer do
       # happy_little_patch.land_cover_class = :developed_high_intensity
       male_deer.assess_fall_winter_food_potential(bunk_patch).should == 0
     end
+
+    it 'selects the patch with highest score'
+
   end
 
 

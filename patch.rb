@@ -62,6 +62,8 @@ class Patch
     self.deer_fall_winter_food = 0
     self.deer_spring_summer_food = 0
     self.deer_thermal_cover = 0
+    self.site_index = 80
+    self.basal_area = (rand) * 150
     @agents = Set.new
   end
 

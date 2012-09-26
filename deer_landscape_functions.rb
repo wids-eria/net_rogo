@@ -124,22 +124,22 @@ module DeerLandscapeFunctions
      #forest_composition_index x forest_structure_index x site_productivity_index
      forest_index = EXTENDED_HABITAT_ATTRIBUTES[patch.land_cover_class][:forest]
      if forest_index > 0
-       spring_summer_food_index = vegetation_type_index * successional_stage_index * site_productivity_index
+       vegetation_type_index(patch) * successional_stage_index(patch) * site_productivity_index(patch)
      else
        spring_summer_food_index = 0
      end
   end
 
 
-  def vegetation_type_index
+  def vegetation_type_index(patch)
     # upland deciduous and mixed = 1
     # upland coniferous = 0.4
     # lowland (aquatic emergent plants) = 0.2 - probably just wetlands (woody and herbacious)
-    if self.patch.land_cover_class = :deciduous or :mixed
+    if patch.land_cover_class = :deciduous or :mixed
       1
-    elsif self.patch.land_cover_class = :coniferous
+    elsif patch.land_cover_class = :coniferous
       0.4
-    elsif self.patch.land_cover_class = :forested_wetland or :emergent_herbacious_wetlands
+    elsif patch.land_cover_class = :forested_wetland or :emergent_herbacious_wetlands
       0.2
     else
       0
@@ -147,7 +147,7 @@ module DeerLandscapeFunctions
   end
 
 
-  def successional_stage_index
+  def successional_stage_index(patch)
     # TODO: these include bedding usage? wtf?
     # upland deciduous and mixed or lowland early successional = 1.0
     # upland deciduous and mixed or lowland mid-successional   = 0.6
