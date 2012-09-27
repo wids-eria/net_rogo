@@ -8,8 +8,9 @@ $log = Logger.new("deer_events.log")
 class Deer < Agent
 
   include DeerLandscapeFunctions
-  
+
   MAX_ENERGY = 100
+  MAXIMUM_AGE = 5475 # 15 years?
 
  # NEED TO ADD PERSISTENT VARIABLES:
   attr_accessor :world
@@ -118,7 +119,10 @@ def initialize
 
 
   def evaluate_neighborhood_for_forage
-    select_highest_score_of_patch_set(neighborhood_in_radius(1))
+    target = select_highest_score_of_patch_set(neighborhood_in_radius(1))
+    puts 'here is the target'
+    puts target.y
+    self.location = [target.x, target.y]
   end
 
   def select_highest_score_of_patch_set(patch_set) # need to figure out how to sort patch_set based on evaluation of food potential
@@ -129,31 +133,29 @@ def initialize
     end
     patch_set[0]                        # should return first element of array, which should now be sorted by season-specific food_index
   end
- 
+
 
 
   def move_to_cover
     # evaluate_steps; permits longer term decision analysis
+    # target = evaluate_neighborhood_for_bedding(neighborhood_in_radius(1))
+    # self.location = [target.x, target.y]
   end
 
 
-  def evaluate_neighborhood_for_bedding
+  def evaluate_neighborhood_for_bedding(patchset)
+    patch_set.sort { |x, y| assess_bedding_potential(x) <=> assess_spring_summer_food_potential(y) }
+  end
+
+  def assess_bedding_potential(patch)
+    # if coniferous
+    # if old
   end
 
 
   def eat
-    
+
   end
-
-
-  def mature
-  end
-
-
-  def check_death
-  end
-
-
 
 
   def rut?
@@ -161,29 +163,36 @@ def initialize
     (268..309).include? world.day_of_year
   end
 
+
   def spring_summer?
     (79..264).include? world.day_of_year
   end
 
+
   # def fall_winter?
   #   if (265..267).include? world.day_of_year || (310..365).include? world.day_of_year || (0..78).include? world.day_of_year
   # end
-    
+
+
   def self.habitat_suitability_for(patch)
     HABITAT_ATTRIBUTES[patch.land_cover_class][:suitability]
   end
+
 
   def habitat_suitability_for(patch)
     self.class.habitat_suitability_for patch
   end
 
+
   def self.can_spawn_on?(patch)
     self.passable?(patch) && self.habitat_suitability_for(patch) == 1
   end
- 
+
+
   def self.passable?(patch)
-    !patch.nil? && habitat_suitability_for(patch) != -1 
+    !patch.nil? && habitat_suitability_for(patch) != -1
   end
+
 
   def passable?(patch)
     self.class.passable? patch
@@ -197,18 +206,37 @@ def initialize
     HABITAT_ATTRIBUTES[patch.land_cover_class][:visibility]
   end
 
+
   def execute_move_sequence
   end
+
+
+  def mature
+  end
+
+
+  def check_death
+    if die_from_mortality_trial? || die_from_old_age?
+      world.deers.delete self
+    end
+  end
+
 
   def die_from_mortality_trial?
     rand > mortality_probability
   end
 
+
+  def die_from_old_age?
+    age > MAXIMUM_AGE
+  end
+
+  
   def mortality_probability
-    if self.patch.land_cover_class == :developed_low_intensity 
+    if self.patch.land_cover_class == :developed_low_intensity
       ((rand * 0.20) + 0.62) ** (1.0 / 365)
     else
-     ((rand * 0.19) + 0.57) ** (1.0 / 365) 
+     ((rand * 0.19) + 0.57) ** (1.0 / 365)
     end
   end
 

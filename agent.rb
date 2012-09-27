@@ -17,10 +17,10 @@ class Agent
     @x = nil
     @y = nil
   end
-  
+
   def x=(new_x)
     if @x and new_x.to_i != @x.to_i
-      if @x != nil && @y != nil 
+      if @x != nil && @y != nil
         patch.remove_agent self
       end
     end
@@ -29,14 +29,14 @@ class Agent
       patch.add_agent self
     end
   end
-  
+
   def x
     @x
   end
-  
+
   def y=(new_y)
     if @y and new_y.to_i != @y.to_i
-      if @x != nil && @y != nil 
+      if @x != nil && @y != nil
         patch.remove_agent self
       end
     end
@@ -45,11 +45,11 @@ class Agent
       patch.add_agent self
     end
   end
-  
+
   def y
     @y
   end
-  
+
   def id
     object_id
   end
@@ -137,20 +137,20 @@ class Agent
   def patch
     world.patch(self.x, self.y)
   end
-  
+
   def agents_in_radius(radius)
-    unflattened_list_of_agents = world.patches_in_radius(self.x, self.y, 1).map{|patch| patch.agents} 
+    unflattened_list_of_agents = world.patches_in_radius(self.x, self.y, 1).map{|patch| patch.agents}
     flattened_list_of_agents = unflattened_list_of_agents.flatten
     flattened_list_of_agents.delete self
     flattened_list_of_agents
   end
-  
+
   def agents_in_radius_of_type(radius, type)
     keepers = []
     agents_in_radius(radius).each do |agent|
       keepers << agent if agent.class.to_s.to_sym == type
     end
     keepers
-  end  
+  end
 end
 

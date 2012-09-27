@@ -4,10 +4,10 @@ require File.dirname(__FILE__) + '/deer'
 class MaleDeer < Deer
 #TODO: set active_hours and movement_rates according to time of year or reproductive phase
 
-  
+  MIN_REPRODUCTIVE_ENERGY = 10
   attr_accessor :min_male_reproductive_energy
-  
-  def move 
+
+  def move
     t = 0
     while t < self.active_hours
       if rut?
@@ -16,7 +16,7 @@ class MaleDeer < Deer
           if agents_in_radius_of_type(1, 'male_deer')
             # compete
           else
-            if self.energy > min_male_reproductive_energy
+            if self.energy > MIN_REPRODUCTIVE_ENERGY
               # try to get lady preggers
             else
               eat
@@ -29,13 +29,13 @@ class MaleDeer < Deer
           # change location
           evaluate_neighborhood_for_forage
           eat
-          t = t + 1 
+          t = t + 1
         end
       elsif spring_summer?
         evaluate_neighborhood_for_forage
         eat
         t = t + 1
-      else # fall by default 
+      else # fall by default
         evaluate_neighborhood_for_forage
         eat
         t = t + 1
@@ -48,7 +48,7 @@ class MaleDeer < Deer
   end
 
   def active_hours
-    if rut? 
+    if rut?
       12
     elsif spring_summer?
       8

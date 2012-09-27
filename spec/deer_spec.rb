@@ -35,7 +35,7 @@ describe MaleDeer do
     #end
   end
 
-  
+
   it 'checks agents on patch' do
     puts male_deer.x
     puts male_deer.y
@@ -64,8 +64,8 @@ describe MaleDeer do
      let(:medium_mixed) { Patch.new }
      let(:old_mixed) { Patch.new }
      let(:bunk_patch) { Patch.new }
-  
-    context 'with range of basal area' do
+
+    context 'with range of basal area values' do
       before do
         young_coniferous.basal_area = 25
         young_coniferous.land_cover_class = :coniferous
@@ -101,14 +101,14 @@ describe MaleDeer do
 
       it 'checks browse availability' do
         male_deer.browse_availability_index(young_coniferous).should == 1
-        male_deer.browse_availability_index(medium_coniferous).should == 0 
+        male_deer.browse_availability_index(medium_coniferous).should == 0
         male_deer.browse_availability_index(old_coniferous).should == 0.5
         male_deer.browse_availability_index(young_deciduous).should == 1
         male_deer.browse_availability_index(medium_deciduous).should == 0
         male_deer.browse_availability_index(old_deciduous).should == 0.5
       end
 
-      
+
       it 'evaluates browse quality index' do
         male_deer.browse_quality_index(young_coniferous).should == 1.0
         male_deer.browse_quality_index(medium_coniferous).should == 1.0
@@ -174,8 +174,15 @@ describe MaleDeer do
       male_deer.assess_fall_winter_food_potential(bunk_patch).should == 0
     end
 
-    it 'selects the patch with highest score'
+    it 'returns the correct number of patches in neighborhood' do
+      male_deer.neighborhood_in_radius(1).kind_of?(Array).should be_true
+      male_deer.neighborhood_in_radius(1).count.should == 8
+    end
 
+    it 'selects the patch with highest score' do
+      patches = Array[young_coniferous, medium_coniferous, old_coniferous, young_deciduous, medium_deciduous, old_deciduous, young_mixed, medium_mixed, old_mixed]
+      male_deer.select_highest_score_of_patch_set(patches).should == young_coniferous
+    end
   end
 
 
@@ -206,8 +213,12 @@ describe MaleDeer do
       male_deer.assess_spring_summer_food_potential(happy_little_patch).should == 0
     end
   end
-  
-  
+
+
+  it 'moves'
+  it 'yards'
+  it 'eats'
+  it 'matures'
   it 'chases ladies during rut'
   it 'picks a destination after evaluating the neighborhood'
   it 'seeks thermal cover in winter'

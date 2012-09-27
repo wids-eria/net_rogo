@@ -1,5 +1,5 @@
 module DeerLandscapeFunctions
-  
+
     EXTENDED_HABITAT_ATTRIBUTES = { open_water:       {suitability: -1, forest_type_index: 0,   forest: 0},
                          developed_open_space:        {suitability: 1,  forest_type_index: 0,   forest: 0},
                          developed_low_intensity:     {suitability: 1,  forest_type_index: 0,   forest: 0},
@@ -17,8 +17,8 @@ module DeerLandscapeFunctions
                          forested_wetland:            {suitability: 1,  forest_type_index: 0,   forest: 1},
                          emergent_herbaceous_wetland: {suitability: 1,  forest_type_index: 0,   forest: 0},
                          excluded:                    {suitability: -1, forest_type_index: 0,   forest: 0}}
-  
-  
+
+
   def assess_thermal_cover
     #forest_composition_index x forest_structure_index x site_productivity_index
     forest_type_index = EXTENDED_HABITAT_ATTRIBUTES[self.land_cover_class][:forest_type_index]
@@ -55,7 +55,7 @@ module DeerLandscapeFunctions
 
 
   def basal_area_index(patch)
-    if 
+    if
       (0..30.49).include? patch.basal_area
       0
     elsif
@@ -106,10 +106,10 @@ module DeerLandscapeFunctions
         0.2
       end
     end
-   
+
 
     def mast_index(patch)
-      if patch.land_cover_class == :deciduous 
+      if patch.land_cover_class == :deciduous
         1
       elsif patch.land_cover_class == :mixed
         0.5
@@ -157,10 +157,10 @@ module DeerLandscapeFunctions
     1
   end
 
-  
+
   def site_productivity_index(patch)
     # TODO: tie max_site_index to stricter number
     max_site_index = 100.0
-    patch.site_index / max_site_index 
+    patch.site_index / max_site_index
   end
 end
