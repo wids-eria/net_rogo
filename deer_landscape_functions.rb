@@ -135,11 +135,12 @@ module DeerLandscapeFunctions
     # upland deciduous and mixed = 1
     # upland coniferous = 0.4
     # lowland (aquatic emergent plants) = 0.2 - probably just wetlands (woody and herbacious)
-    if patch.land_cover_class = :deciduous or :mixed
+    puts patch.land_cover_class
+    if patch.land_cover_class == :deciduous || patch.land_cover_class == :mixed
       1
-    elsif patch.land_cover_class = :coniferous
+    elsif patch.land_cover_class == :coniferous
       0.4
-    elsif patch.land_cover_class = :forested_wetland or :emergent_herbacious_wetlands
+    elsif patch.land_cover_class == :forested_wetland or patch.land_cover_class == :emergent_herbacious_wetlands
       0.2
     else
       0
@@ -154,7 +155,24 @@ module DeerLandscapeFunctions
     # upland deciduous and mixed or lowland late-successional  = 0.2
     # upland coniferous early- to mid-successional             = 1.0
     # upland coniferous late-successional                      = 0.5
-    1
+
+    if [:deciduous, :mixed, :forested_wetland].include?(patch.land_cover_class)
+      if patch.basal_area < 45
+        1.0
+      elsif patch.basal_area < 80
+        0.6
+      else
+        0.2
+      end
+    elsif patch.land_cover_class == :coniferous
+      if patch.basal_area < 80
+        1.0
+      else
+        0.5
+      end
+    else
+      0.0
+    end
   end
 
 

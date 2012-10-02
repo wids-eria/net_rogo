@@ -52,7 +52,7 @@ describe MaleDeer do
   end
 
 
-  describe 'evaluate_neighborhood_for_forage in winter' do
+  describe 'evaluate neighborhood for forage' do
     let!(:world) { World.new width: 3, height: 3}
     let(:young_coniferous) { Patch.new }
     let(:medium_coniferous) { Patch.new }
@@ -64,6 +64,7 @@ describe MaleDeer do
      let(:medium_mixed) { Patch.new }
      let(:old_mixed) { Patch.new }
      let(:bunk_patch) { Patch.new }
+     let(:forested_wetland) { Patch.new }
 
     context 'with range of basal area values' do
       before do
@@ -96,6 +97,9 @@ describe MaleDeer do
         old_mixed.site_index = 20
         bunk_patch.basal_area = 0
         bunk_patch.land_cover_class = :barren
+        forested_wetland.basal_area = 80
+        forested_wetland.land_cover_class = :forested_wetland
+        forested_wetland.site_index = 80
       end
 
 
@@ -166,6 +170,49 @@ describe MaleDeer do
         male_deer.assess_fall_winter_food_potential(medium_mixed).should be_within(0.0001).of(0.63)
         male_deer.assess_fall_winter_food_potential(old_mixed).should == 0.72
       end
+
+      it 'provides a vegetation type index' do
+        male_deer.vegetation_type_index(young_coniferous).should == 0.4
+        male_deer.vegetation_type_index(medium_coniferous).should == 0.4
+        male_deer.vegetation_type_index(old_coniferous).should == 0.4
+        male_deer.vegetation_type_index(young_deciduous).should == 1.0
+        male_deer.vegetation_type_index(medium_deciduous).should == 1.0
+        male_deer.vegetation_type_index(old_deciduous).should == 1.0
+        male_deer.vegetation_type_index(young_mixed).should == 1.0
+        male_deer.vegetation_type_index(medium_mixed).should == 1.0
+        male_deer.vegetation_type_index(old_mixed).should == 1.0
+        male_deer.vegetation_type_index(forested_wetland).should == 0.2
+        male_deer.vegetation_type_index(bunk_patch).should == 0.0
+      end
+    
+      it 'provides a successional stage index' do # ba's = 25 90 150
+        male_deer.successional_stage_index(young_coniferous).should == 1.0
+        male_deer.successional_stage_index(medium_coniferous).should == 0.5
+        male_deer.successional_stage_index(old_coniferous).should == 0.5
+        male_deer.successional_stage_index(young_deciduous).should == 1.0
+        male_deer.successional_stage_index(medium_deciduous).should == 0.2
+        male_deer.successional_stage_index(old_deciduous).should == 0.2
+        male_deer.successional_stage_index(young_mixed).should == 1.0
+        male_deer.successional_stage_index(medium_mixed).should == 0.2
+        male_deer.successional_stage_index(old_mixed).should == 0.2
+        male_deer.successional_stage_index(forested_wetland).should == 0.2
+        male_deer.successional_stage_index(bunk_patch).should == 0.0
+      end
+
+      it 'evaluates the suitability of patches in summer' do # veg type x successional stage x productivity
+        male_deer.assess_spring_summer_food_potential(young_coniferous).should == 0.4
+        male_deer.assess_spring_summer_food_potential(medium_coniferous).should be_within(0.00001).of(0.18)
+        male_deer.assess_spring_summer_food_potential(old_coniferous).should be_within(0.000001).of(0.16)
+        male_deer.assess_spring_summer_food_potential(young_deciduous).should == 0.7
+        male_deer.assess_spring_summer_food_potential(medium_deciduous).should == 0.12
+        male_deer.assess_spring_summer_food_potential(old_deciduous).should == 0.1
+        male_deer.assess_spring_summer_food_potential(young_mixed).should be_within(0.0000001).of(0.4)
+        male_deer.assess_spring_summer_food_potential(medium_mixed).should == 0.06
+        male_deer.assess_spring_summer_food_potential(old_mixed).should be_within(0.0000001).of(0.04)
+        male_deer.assess_spring_summer_food_potential(forested_wetland).should be_within(0.0000001).of(0.032)
+        male_deer.assess_spring_summer_food_potential(bunk_patch).should == 0.0
+      end
+ 
     end
 
 
@@ -183,7 +230,9 @@ describe MaleDeer do
       patches = Array[young_coniferous, medium_coniferous, old_coniferous, young_deciduous, medium_deciduous, old_deciduous, young_mixed, medium_mixed, old_mixed]
       male_deer.select_highest_score_of_patch_set(patches).should == young_coniferous
     end
-  end
+
+
+ end
 
 
 
