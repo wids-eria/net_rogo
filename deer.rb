@@ -133,9 +133,9 @@ def initialize
 
   def select_highest_score_of_patch_set(patch_set) # need to figure out how to sort patch_set based on evaluation of food potential
     if spring_summer?
-      patch_set.sort { |x, y| assess_spring_summer_food_potential(x) <=> assess_spring_summer_food_potential(y) }
+      patch_set.sort! { |x, y| assess_spring_summer_food_potential(x) <=> assess_spring_summer_food_potential(y) }
     else
-      patch_set.sort { |x, y| assess_fall_winter_food_potential(x) <=> assess_fall_winter_food_potential(y) }
+      patch_set.sort! { |x, y| assess_fall_winter_food_potential(x) <=> assess_fall_winter_food_potential(y) }
     end
     patch_set[0]                        # should return first element of array, which should now be sorted by season-specific food_index
   end
@@ -202,18 +202,6 @@ def initialize
   end
 
 
-  def evaluate_steps
-    immediate_neighborhood = neigborhood_in_radius 1
-    first_order_steps = immediate_neighborhood.collect
-    HABITAT_ATTRIBUTES[patch.land_cover_class][:suitability]
-    HABITAT_ATTRIBUTES[patch.land_cover_class][:visibility]
-  end
-
-
-  def execute_move_sequence
-  end
-
-
   def mature
   end
 
@@ -231,7 +219,7 @@ def initialize
 
 
   def die_from_old_age?
-    age > MAXIMUM_AGE
+    self.age > MAXIMUM_AGE
   end
 
   

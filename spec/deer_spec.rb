@@ -17,9 +17,14 @@ describe MaleDeer do
     male_deer.tick
   end
 
+  describe 'ticks during rut' do
+    before do
+      world.stubs :day_of_year => 270 
+    end
 
-  it 'ticks2' do
-    male_deer_2.tick
+    it 'ticks2' do
+      male_deer_2.tick
+    end
   end
 
 

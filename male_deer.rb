@@ -11,6 +11,7 @@ class MaleDeer < Deer
     t = 0
     while t < self.active_hours
       if rut?
+        potential_mates = find_potential_mates
         if agents_in_radius_of_type(1, 'female_deer')        # if females around
           t = t + 1
           if agents_in_radius_of_type(1, 'male_deer')
@@ -45,6 +46,7 @@ class MaleDeer < Deer
     end
     evaluate_neighborhood_for_bedding(neighborhood_in_radius(1))
     move_to_cover
+    self.age += 1
   end
 
   def active_hours
@@ -65,5 +67,45 @@ class MaleDeer < Deer
     else
       8
     end
+  end
+
+  def find_potential_mates
+    neighborhood = world.patches_in_radius(self.x, self.y, 1) 
+    puts "new neighborhood looks like #{neighborhood.count}"
+    # identify location with highest fertile female : male ratio
+    # for each patch, count number of receptive females and number of males
+    count_data = find_male_female_counts(neighborhood)
+    count_data.sort_by do |patch| 
+      if patch[2] == 0
+        0
+      else
+        patch[1] / patch[2]
+      end
+      puts "selected patch is #{count_data[0]}"
+    end
+
+    #puts "mate availability looks like: #{count_data}"
+  end
+
+
+  def find_male_female_counts(neighborhood)
+    neighborhood_data = []
+    neighborhood.each do |patch| 
+      female_count = 0
+      male_count = 0
+      # count receptive females on patch
+      patch.agents.each do |agent|
+        if agent.class == :female_deer
+          if agent.in_estrus?
+            female_count += 1
+          end
+        elsif agent.class == :male_deer
+          male_count += 1
+        end
+      end
+      neighborhood_data << [patch, male_count, female_count]
+    end
+    neighborhood_data
+    # puts "that's it!"
   end
 end

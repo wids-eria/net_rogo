@@ -37,6 +37,7 @@ class FemaleDeer < Deer
         raise ArgumentError, 'Current day of year is outside defined season ranges for deer (movement)'
       end
     end
+    self.age += 1
   end
 
 
