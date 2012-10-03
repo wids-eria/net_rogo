@@ -119,10 +119,16 @@ def initialize
 
 
   def evaluate_neighborhood_for_forage
-    target = select_highest_score_of_patch_set(neighborhood_in_radius(1))
-    puts 'here is the target'
-    puts target.y
-    self.location = [target.x, target.y]
+    puts '------------'
+    puts "current coordinates = #{self.x}, #{self.y}"
+    neighborhood = neighborhood_in_radius(1)
+    puts "There are #{neighborhood.count} patches in the neighborhood"
+    target = select_highest_score_of_patch_set(neighborhood)
+    puts "The selected target is #{target}"
+   # target = select_highest_score_of_patch_set(neighborhood_in_radius(1))
+    puts "Target coordinates are #{target.x}, #{target.y}"
+    self.location = [(target.x + 0.5), (target.y + 0.5)]
+    puts "New location is #{self.x}, #{self.y}"
   end
 
   def select_highest_score_of_patch_set(patch_set) # need to figure out how to sort patch_set based on evaluation of food potential
@@ -144,13 +150,10 @@ def initialize
 
 
   def evaluate_neighborhood_for_bedding(patchset)
-    patch_set.sort { |x, y| assess_bedding_potential(x) <=> assess_spring_summer_food_potential(y) }
+    patchset.sort { |x, y| assess_bedding_potential(x) <=> assess_bedding_potential(y) }
   end
 
-  def assess_bedding_potential(patch)
-    # if coniferous
-    # if old
-  end
+
 
 
   def eat

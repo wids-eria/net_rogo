@@ -235,6 +235,37 @@ describe MaleDeer do
  end
 
 
+  describe '#patches_in_radius' do
+    it 'returns neighborhood of 1 from center of patch' do
+      male_deer.location = [1.5, 1.5]
+      male_deer.neighborhood_in_radius(1).collect(&:location).to_set.should == [[0,2],[1,2],[2,2],
+                                                                             [0,1],      [2,1],
+                                                                             [0,0],[1,0],[2,0]].to_set
+    end
+
+    it 'returns neighborhood of 1 from corner of patch' do
+      male_deer.location = [1.9, 1.9]
+      male_deer.neighborhood_in_radius(1).collect(&:location).to_set.should == [[0,2],[1,2],[2,2],
+                                                                             [0,1],      [2,1],
+                                                                                   [1,0],[2,0]].to_set
+    end
+
+    it 'returns neighborhood of 1 from corner of world' do
+      male_deer.location = [0.1, 0.1]
+      male_deer.neighborhood_in_radius(1).collect(&:location).to_set.should == [
+                                                                             [0,1],
+                                                                                   [1,0]      ].to_set
+    end
+
+    it 'returns neighborhood of 1 from corner of world' do
+      male_deer.location = [0.0, 0.0]
+      male_deer.neighborhood_in_radius(1).collect(&:location).to_set.should == [
+
+                                                                                              ].to_set
+    end
+  end
+
+
 
   describe '#evaluate_neighborhood_for_forage in summer' do
     let!(:world) { World.new width: 3, height: 3}

@@ -105,29 +105,27 @@ class Patch
     end
   end
 
+
   def grow_voles
     density_dependent_growth_delta = daily_growth_delta * (1 - (self.vole_population/self.max_vole_pop))
     self.vole_population = self.vole_population + density_dependent_growth_delta * self.vole_population
   end
 
+
   def daily_growth_delta
     UNHINDERED_VOLE_GROWTH_RATE
   end
+
 
   def calculate_deer_food_base
     # TODO: use indexes to determine potential, and logistic growth - deer removal to indicate current food amounts
   end
 
-  def calculate_deer_metrics
-    # TODO: these indices only needs to be updated once per year
-    self.deer_thermal_cover = self.assess_thermal_cover
-    self.deer_spring_summer_food = self.assess_spring_summer_food_potential
-    self.deer_fall_winter_food = self.assess_fall_winter_food_potential
-  end
 
   def land_cover_from_code(code)
     self.land_cover_class = LAND_COVER_CLASSES[code] || raise("unknown code #{code}")
   end
+
 
   def color
     COLORS[self.land_cover_class] || raise("#{self.land_cover_class} needs color")

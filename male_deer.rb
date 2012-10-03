@@ -43,7 +43,7 @@ class MaleDeer < Deer
       #   raise ArgumentError, 'Current day of year is outside defined season ranges for deer (movement)'
       end
     end
-    evaluate_neighborhood_for_bedding
+    evaluate_neighborhood_for_bedding(neighborhood_in_radius(1))
     move_to_cover
   end
 

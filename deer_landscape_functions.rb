@@ -19,27 +19,6 @@ module DeerLandscapeFunctions
                          excluded:                    {suitability: -1, forest_type_index: 0,   forest: 0}}
 
 
-  def assess_thermal_cover
-    #forest_composition_index x forest_structure_index x site_productivity_index
-    forest_type_index = EXTENDED_HABITAT_ATTRIBUTES[self.land_cover_class][:forest_type_index]
-    if forest_type_index > 0
-      thermal_index = forest_composition_index * forest_structure_index * site_productivity_index
-    else
-      thermal_index = 0
-    end
-  end
-
-
-  def forest_composition_index
-    forest_type_index = EXTENDED_HABITAT_ATTRIBUTES[patch.land_cover_class][:forest_type_index]
-    # TODO: currently cannot differentiate between conifer types; would be useful to implement general moisture regime (mesic/xeric)
-      # Northern Hemlock, White Cedar = 1 (lowland/mesic conifers)
-      # spruce and fir = 0.8 (woody wetlands)
-      # pine = 0.4 (upland/xeric conifers)
-    coniferous_species_index = 1
-    forest_composition_index = forest_type_index * coniferous_species_index
-  end
-
 
   def forest_structure_index(patch)
     # TODO: finish this off when access to forest data is available
@@ -135,7 +114,6 @@ module DeerLandscapeFunctions
     # upland deciduous and mixed = 1
     # upland coniferous = 0.4
     # lowland (aquatic emergent plants) = 0.2 - probably just wetlands (woody and herbacious)
-    puts patch.land_cover_class
     if patch.land_cover_class == :deciduous || patch.land_cover_class == :mixed
       1
     elsif patch.land_cover_class == :coniferous
@@ -146,6 +124,79 @@ module DeerLandscapeFunctions
       0
     end
   end
+
+
+  def assess_bedding_potential(patch)
+    # forest_composition_index x forest_structure_index x site_productivity_index
+    forest_composition_index(patch) * forest_structure_index(patch) * site_productivity_index(patch)
+  end
+
+  
+      def forest_composition_index(patch)
+        # forest_type_index x coniferous_species_index
+        forest_type_index(patch) * coniferous_species_index(patch)
+      end
+
+
+          def forest_type_index(patch)
+            if patch.land_cover_class == :coniferous
+              1
+            elsif patch.land_cover_class == :mixed
+              0.5
+            else
+              0
+            end
+          end
+
+
+          def coniferous_species_index(patch)
+            if patch.land_cover_class == :coniferous
+              if patch.basal_area < 40
+                0.4
+              elsif patch.basal_area < 80
+                0.8
+              else
+                1.0
+              end
+            else
+              1
+            end
+          end
+
+
+      def forest_structure_index(patch)
+        # (2 x ((BA_index + canopy_cover_index + DBH_index) / 3) + age_structure_index) / 2
+        (2 * ((basal_area_index(patch) + canopy_cover_index(patch) + diameter_index(patch)) / 3) + age_structure_index(patch)) / 2
+      end
+
+
+         def canopy_cover_index(patch)
+           if patch.basal_area < 60
+             0.5
+           else
+             1.0
+           end
+         end
+
+
+         def diameter_index(patch)
+           # if mean dbh > 3.544 in
+           # 1
+           # elsif mean dbh 1.9685 - 3.544
+           # 0.5
+           # elsif
+           0
+         end
+
+
+         def age_structure_index(patch)
+           if patch.basal_area < 80
+             1.0
+           else
+             0.0
+           end
+         end
+
 
 
   def successional_stage_index(patch)
