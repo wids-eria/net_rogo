@@ -145,10 +145,12 @@ class Agent
     flattened_list_of_agents
   end
 
-  def agents_in_radius_of_type(radius, type)
+
+  def agents_in_radius_of_type(radius, klass)
     keepers = []
     agents_in_radius(radius).each do |agent|
-      keepers << agent if agent.class.to_s.to_sym == type
+      # binding.pry
+      keepers << agent if agent.kind_of? klass
     end
     keepers
   end

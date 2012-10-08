@@ -1,14 +1,23 @@
 require File.dirname(__FILE__) + '/../male_deer'
+require File.dirname(__FILE__) + '/../female_deer'
 
 describe MaleDeer do
   let!(:world) { World.new width: 300, height: 300 }
-  let!(:deers) { MaleDeer.spawn_population world, 2 }
-  let(:male_deer) { deers.first }
-  let(:male_deer_2) { deers[1] }
+  let!(:male_deers) { MaleDeer.spawn_population world, 2 }
+  let(:male_deer) { male_deers.first }
+  let(:male_deer_2) { male_deers[1] }
+  let!(:female_deers) { FemaleDeer.spawn_population world, 2 }
+  let(:female_deer) { female_deers.first }
+  let(:female_deer_2) { female_deers[1] }
+
 
   before do
     male_deer.location = [1.5, 1.5]
     male_deer_2.location = [1.1, 1.1]
+    female_deer.location = [2.5, 2.5]
+    female_deer.reproductive_stage = :in_estrous
+    female_deer_2.location = [0.5, 0.5]
+    female_deer_2.reproductive_stage = :di_metestrus
   end
 
 # describe and before executed immediately prior to each it (to set it up)
@@ -18,12 +27,20 @@ describe MaleDeer do
   end
 
   describe 'ticks during rut' do
+    # TODO: HAVE TO ADD A FEMALE DEER, SHOULD MOVE TOWARD THAT CELL EVERY TIME
     before do
       world.stubs :day_of_year => 270 
     end
 
+
     it 'ticks2' do
       male_deer_2.tick
+    end
+
+
+    it 'chases the ladies' do
+      male_deer.tick
+      [female_deer.patch].include?(male_deer.patch).should == true
     end
   end
 
@@ -204,6 +221,7 @@ describe MaleDeer do
         male_deer.successional_stage_index(bunk_patch).should == 0.0
       end
 
+
       it 'evaluates the suitability of patches in summer' do # veg type x successional stage x productivity
         male_deer.assess_spring_summer_food_potential(young_coniferous).should == 0.4
         male_deer.assess_spring_summer_food_potential(medium_coniferous).should be_within(0.00001).of(0.18)
@@ -217,7 +235,37 @@ describe MaleDeer do
         male_deer.assess_spring_summer_food_potential(forested_wetland).should be_within(0.0000001).of(0.032)
         male_deer.assess_spring_summer_food_potential(bunk_patch).should == 0.0
       end
- 
+
+
+      it 'assesses the forest composition index' do # BA = 25 90 150
+        male_deer.forest_composition_index(young_coniferous).should == 0.4
+        male_deer.forest_composition_index(medium_coniferous).should == 1.0
+        male_deer.forest_composition_index(old_coniferous).should == 1.0
+        male_deer.forest_composition_index(young_deciduous).should == 0.0
+        male_deer.forest_composition_index(medium_deciduous).should == 0.0
+        male_deer.forest_composition_index(old_deciduous).should == 0.0
+        male_deer.forest_composition_index(young_mixed).should == 0.2 
+        male_deer.forest_composition_index(medium_mixed).should == 0.2
+        male_deer.forest_composition_index(old_mixed).should == 0.2
+        male_deer.forest_composition_index(forested_wetland).should == 0.0
+        male_deer.forest_composition_index(bunk_patch).should == 0.0
+      end
+
+
+      it 'assesses the forest structure index' do # BA = 25 90 150     (2 x ((BA_index + canopy_cover_index + DBH_index) / 3) + age_structure_index) / 2
+        male_deer.forest_structure_index(young_coniferous).should be_within(0.00001).of(0.66666)    # 2 * ((0.0 + 0.5 + 0.0) / 3) + 1.0) / 2 = 0.66666
+        male_deer.forest_structure_index(medium_coniferous).should be_within(0.00001).of(0.5)       # 2 * ((0.5 + 1.0 + 0.0) / 3) + 0.0) / 2 = 0.5
+        male_deer.forest_structure_index(old_coniferous).should be_within(0.00001).of(0.66666)      # 2 * ((1.0 + 1.0 + 0.0) / 3) + 0.0) / 2 = 0.66666
+        male_deer.forest_structure_index(young_deciduous).should be_within(0.00001).of(0.66666)     # 2 * ((0.0 + 0.5 + 0.0) / 3) + 1.0) / 2 = 0.66666
+        male_deer.forest_structure_index(medium_deciduous).should be_within(0.00001).of(0.5)        # 2 * ((0.5 + 1.0 + 0.0) / 3) + 0.0) / 2 = 0.5
+        male_deer.forest_structure_index(old_deciduous).should be_within(0.00001).of(0.66666)       # 2 * ((1.0 + 1.0 + 0.0) / 3) + 0.0) / 2 = 0.66666
+        male_deer.forest_structure_index(young_mixed).should be_within(0.00001).of(0.66666)         # 2 * ((0.0 + 0.5 + 0.0) / 3) + 1.0) / 2 = 0.66666
+        male_deer.forest_structure_index(medium_mixed).should be_within(0.00001).of(0.5)            # 2 * ((0.5 + 1.0 + 0.0) / 3) + 0.0) / 2 = 0.5
+        male_deer.forest_structure_index(old_mixed).should be_within(0.00001).of(0.66666)           # 2 * ((1.0 + 1.0 + 0.0) / 3) + 0.0) / 2 = 0.66666
+        male_deer.forest_structure_index(forested_wetland).should be_within(0.00001).of(0.5)        # 2 * ((0.5 + 1.0 + 0.0) / 3) + 0.0) / 2 = 0.66666
+        male_deer.forest_structure_index(bunk_patch).should be_within(0.00001).of(0.0)              # 2 * ((0.0 + 0.0 + 0.0) / 3) + 0.0) / 2 = 0.0
+      end
+
     end
 
 
@@ -283,10 +331,6 @@ describe MaleDeer do
       puts world.day_of_year
       # world.day_of_year = 90
     end
-
-    it 'assesses vegetation type index'
-    it 'evaluates successional stage index'
-    it 'evaluates site productivity index'
 
     it 'returns the suitability for a happy patch in summer' do
       happy_little_patch.land_cover_class = :deciduous

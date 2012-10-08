@@ -1,5 +1,6 @@
 require File.dirname(__FILE__) + '/deer'
-
+require File.dirname(__FILE__) + '/female_deer'
+require 'pry'
 
 class MaleDeer < Deer
 #TODO: set active_hours and movement_rates according to time of year or reproductive phase
@@ -11,26 +12,45 @@ class MaleDeer < Deer
     t = 0
     while t < self.active_hours
       if rut?
-        potential_mates = find_potential_mates
-        if agents_in_radius_of_type(1, 'female_deer')        # if females around
-          t = t + 1
-          if agents_in_radius_of_type(1, 'male_deer')
-            # compete
+        t = t + 1
+        reproduction_target = select_best_reproduction_patch 
+        # move to patch reproduction_target[0]
+        puts "reproduction target is: #{reproduction_target}"
+        # binding.pry
+        if reproduction_target[:female_count] > 0      # if females around
+          self.location = reproduction_target[:patch].location
+          puts 'should move to closest lady at #{reproduction_target[:patch]}'
+          if reproduction_target[:male_count] > 0      # if males around
+            local_male_deer = agents_in_radius_of_type(0.02, MaleDeer) # iffy, but more selective than self.patch.agents ALSO #TODO Not sure if I can select male_deer
+            local_male_deer.sort! {|x,y| x.energy <=> y.energy}
+            if self.energy > local_male_deer[0].energy
+              if self.energy > MIN_REPRODUCTIVE_ENERGY
+                attempt_to_mate
+              else
+                eat
+              end
+            else
+              eat
+            end
           else
             if self.energy > MIN_REPRODUCTIVE_ENERGY
-              # try to get lady preggers
+              attempt_to_mate
             else
               eat
             end
           end
-        elsif agents_in_radius_of_type(2, female_deer)
-          # move towards one of females (preferably receptive ones)
-          # t = t + (1 / rut_movement_rate)
-        else
+        else 
+          local_females = agents_in_radius_of_type(2, FemaleDeer)
+          local_females = local_females.select {|female| female.reproductive_stage == :in_estrus}
+          if local_females.count > 0
+            local_females.shuffle.max_by(&:energy) # move towards one of females (preferably receptive ones)
+            puts 'move towards one of females (preferably receptive ones)'
+            self.location = [local_females[0].x, local_females[0].y]
+          else
           # change location
-          evaluate_neighborhood_for_forage
-          eat
-          t = t + 1
+            evaluate_neighborhood_for_forage
+            eat
+          end
         end
       elsif spring_summer?
         evaluate_neighborhood_for_forage
@@ -61,30 +81,22 @@ class MaleDeer < Deer
     end
   end
 
-  def active_hours
-    if growing_season?
-      12
-    else
-      8
-    end
-  end
 
-  def find_potential_mates
+  def select_best_reproduction_patch
     neighborhood = world.patches_in_radius(self.x, self.y, 1) 
     puts "new neighborhood looks like #{neighborhood.count}"
     # identify location with highest fertile female : male ratio
     # for each patch, count number of receptive females and number of males
     count_data = find_male_female_counts(neighborhood)
-    count_data.sort_by do |patch| 
-      if patch[2] == 0
-        0
+    count_data.shuffle.sort_by do |patch| 
+      if patch[:female_count] == 0 # if there are no females
+        0.0
       else
-        patch[1] / patch[2]
+        patch[:male_count].to_f / patch[:female_count].to_f
       end
-      puts "selected patch is #{count_data[0]}"
     end
-
-    #puts "mate availability looks like: #{count_data}"
+    puts count_data.collect{|c| [c[:female_count], c[:male_count]]}.inspect
+    count_data[0]
   end
 
 
@@ -96,16 +108,13 @@ class MaleDeer < Deer
       # count receptive females on patch
       patch.agents.each do |agent|
         if agent.class == :female_deer
-          if agent.in_estrus?
-            female_count += 1
-          end
+          female_count += 1
         elsif agent.class == :male_deer
           male_count += 1
         end
       end
-      neighborhood_data << [patch, male_count, female_count]
+      neighborhood_data << {patch: patch, male_count: male_count, female_count: female_count}
     end
     neighborhood_data
-    # puts "that's it!"
   end
 end

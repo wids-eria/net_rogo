@@ -1,6 +1,10 @@
 require 'set'
 
 class Patch
+
+  def to_s
+    "#<#{self.class.name}:#{self.object_id} x:#{self.x}, y:#{self.y}, land_cover_class:#{self.land_cover_class}, agents:#{self.agents.size}>"
+  end
   
   require File.dirname(__FILE__) + '/deer_landscape_functions'
   include DeerLandscapeFunctions

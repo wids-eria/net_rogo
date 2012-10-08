@@ -159,7 +159,7 @@ module DeerLandscapeFunctions
                 1.0
               end
             else
-              1
+              0.4 
             end
           end
 
@@ -171,7 +171,9 @@ module DeerLandscapeFunctions
 
 
          def canopy_cover_index(patch)
-           if patch.basal_area < 60
+           if patch.basal_area == 0.0
+             0.0
+           elsif patch.basal_area < 60.0
              0.5
            else
              1.0
@@ -190,7 +192,9 @@ module DeerLandscapeFunctions
 
 
          def age_structure_index(patch)
-           if patch.basal_area < 80
+           if patch.basal_area == 0.0
+             0.0
+           elsif patch.basal_area < 80
              1.0
            else
              0.0
