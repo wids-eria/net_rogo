@@ -38,6 +38,18 @@ attr_accessor :reproductive_stage, :reproductive_clock, :estrous_clock, :estrous
     self.reproductive_stage = :impregnated
   end
 
+  def impregnated?
+    self.reproductive_stage == :impregnated
+  end
+
+  def set_in_estrus
+    self.reproductive_stage = :in_estrus
+  end
+
+  def in_estrus?
+    self.reproductive_stage == :in_estrus
+  end
+
 
   def tick_reproductive_clock
 

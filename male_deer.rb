@@ -116,11 +116,14 @@ class MaleDeer < Deer
   end
 
   def attempt_to_mate
-    potential_females = self.patch.agents.select{|agent| agent.kind_of?(FemaleDeer) && agent.reproductive_stage == :in_estrus}
+    potential_females = self.patch.agents.select{|agent| agent.kind_of?(FemaleDeer) && agent.in_estrus?}
     return if potential_females.empty?
-    the_one = potential_females.shuffle.max_by(&:energy).first
-    if rand < 0.8
-      the_one.reproductive_stage = :impregnated
-    end
+
+    the_one = potential_females.shuffle.max_by(&:energy)
+    the_one.impregnate if succesfully_mated?
+  end
+
+  def succesfully_mated?
+    rand < 0.8
   end
 end

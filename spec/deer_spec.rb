@@ -373,14 +373,20 @@ describe MaleDeer do
     before do
       male_deer.location = world.all_patches.first.location
       female_deer.location = world.all_patches.first.location
-      # stub should do it
+
+      female_deer.set_in_estrus
     end
 
     it 'impregnates a female on patch' do
-      female_deer.reproductive_stage.should == :in_estrous
+      male_deer.stubs :succesfully_mated? => true
       male_deer.attempt_to_mate
-      female_deer.reproductive_stage.should == :impregnated
+      female_deer.impregnated?.should == true
+    end
+
+    it 'does not impregnate female on patch' do
+      male_deer.stubs :succesfully_mated? => false
+      male_deer.attempt_to_mate
+      female_deer.impregnated?.should == false
     end
   end
-
 end
