@@ -2,6 +2,7 @@ require File.dirname(__FILE__) + '/../male_deer'
 require File.dirname(__FILE__) + '/../female_deer'
 
 describe MaleDeer do
+  context "big happy family" do
   let!(:world) { World.new width: 300, height: 300 }
   let!(:male_deers) { MaleDeer.spawn_population world, 2 }
   let(:male_deer) { male_deers.first }
@@ -361,5 +362,25 @@ describe MaleDeer do
 #      male_marten.forage_distance.should be_within(0.001).of(15.7183)
 #    end
 #  end
+  #
+  end
+
+  describe 'mating' do
+    let!(:world) { World.new width: 1, height: 1}
+    let!(:male_deer)   { MaleDeer.spawn_population(world, 1).first }
+    let!(:female_deer) { FemaleDeer.spawn_population(world, 1).first }
+
+    before do
+      male_deer.location = world.all_patches.first.location
+      female_deer.location = world.all_patches.first.location
+      # stub should do it
+    end
+
+    it 'impregnates a female on patch' do
+      female_deer.reproductive_stage.should == :in_estrous
+      male_deer.attempt_to_mate
+      female_deer.reproductive_stage.should == :impregnated
+    end
+  end
 
 end

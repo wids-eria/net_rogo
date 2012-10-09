@@ -2,15 +2,14 @@ require File.dirname(__FILE__) + '/deer'
 
 class FemaleDeer < Deer
 
-attr_accessor :in_euterus, :in_met_diestrus, :in_gestation, :in_lactation, :in_anestrus
-attr_accessor :reproductive_stage, :reproductive_clock, :estrous_clock
+attr_accessor :reproductive_stage, :reproductive_clock, :estrous_clock, :estrous_cycle_length
 #TODO: set active_hours and movement_rates according to time of year or reproductive phase
 
   def initialize
     super
     self.reproductive_clock = 0
-    reproductive_stage = :anestrous
-    estrous_cycle_length = rand(2) + 3
+    self.reproductive_stage = :anestrous
+    self.estrous_cycle_length = rand(2) + 3
   end
 
   def move
