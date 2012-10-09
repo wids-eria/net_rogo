@@ -38,10 +38,9 @@ class MaleDeer < Deer
           end
         else 
           local_females = agents_in_radius_of_type(2, FemaleDeer)
-          local_females = local_females.select {|female| female.reproductive_stage == :in_estrus}
+          local_females = local_females.select(&:estrus?)
           if local_females.count > 0
             local_females.shuffle.max_by(&:energy) # move towards one of females (preferably receptive ones)
-            puts 'move towards one of females (preferably receptive ones)'
             self.location = [local_females[0].x, local_females[0].y]
           else
           # change location
@@ -81,7 +80,6 @@ class MaleDeer < Deer
 
   def select_best_reproduction_patch
     neighborhood = world.patches_in_radius(self.x, self.y, 1) 
-    puts "new neighborhood looks like #{neighborhood.count}"
     # identify location with highest fertile female : male ratio
     # for each patch, count number of receptive females and number of males
     count_data = find_male_female_counts(neighborhood)
@@ -92,7 +90,6 @@ class MaleDeer < Deer
         patch[:male_count].to_f / patch[:female_count].to_f
       end
     end
-    puts count_data.collect{|c| [c[:female_count], c[:male_count]]}.inspect
     count_data[0]
   end
 
@@ -116,7 +113,7 @@ class MaleDeer < Deer
   end
 
   def attempt_to_mate
-    potential_females = self.patch.agents.select{|agent| agent.kind_of?(FemaleDeer) && agent.in_estrus?}
+    potential_females = self.patch.agents.select{|agent| agent.kind_of?(FemaleDeer) && agent.estrus?}
     return if potential_females.empty?
 
     the_one = potential_females.shuffle.max_by(&:energy)

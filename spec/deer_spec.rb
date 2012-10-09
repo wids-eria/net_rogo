@@ -16,9 +16,9 @@ describe MaleDeer do
     male_deer.location = [1.5, 1.5]
     male_deer_2.location = [1.1, 1.1]
     female_deer.location = [2.5, 2.5]
-    female_deer.reproductive_stage = :in_estrous
+    female_deer.set_estrus
     female_deer_2.location = [0.5, 0.5]
-    female_deer_2.reproductive_stage = :di_metestrus
+    female_deer_2.set_di_metestrus
   end
 
 # describe and before executed immediately prior to each it (to set it up)
@@ -374,7 +374,7 @@ describe MaleDeer do
       male_deer.location = world.all_patches.first.location
       female_deer.location = world.all_patches.first.location
 
-      female_deer.set_in_estrus
+      female_deer.set_estrus
     end
 
     it 'impregnates a female on patch' do

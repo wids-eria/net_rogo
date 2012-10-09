@@ -1,14 +1,17 @@
 require File.dirname(__FILE__) + '/deer'
+require File.dirname(__FILE__) + '/deer_reproductive_stages'
 
 class FemaleDeer < Deer
+  include DeerReproductiveStages
 
-attr_accessor :reproductive_stage, :reproductive_clock, :estrous_clock, :estrous_cycle_length
-#TODO: set active_hours and movement_rates according to time of year or reproductive phase
+  attr_accessor :reproductive_stage, :reproductive_clock, :estrous_clock, :estrous_cycle_length
+  #TODO: set active_hours and movement_rates according to time of year or reproductive phase
 
   def initialize
     super
     self.reproductive_clock = 0
-    self.reproductive_stage = :anestrous
+    self.estrous_clock = 0
+    set_anestrus
     self.estrous_cycle_length = rand(2) + 3
   end
 
@@ -31,72 +34,54 @@ attr_accessor :reproductive_stage, :reproductive_clock, :estrous_clock, :estrous
       self.reproductive_clock += 1
     end
   end
- 
-
-  def impregnate
-    self.reproductive_clock = 0
-    self.reproductive_stage = :impregnated
-  end
-
-  def impregnated?
-    self.reproductive_stage == :impregnated
-  end
-
-  def set_in_estrus
-    self.reproductive_stage = :in_estrus
-  end
-
-  def in_estrus?
-    self.reproductive_stage == :in_estrus
-  end
 
 
   def tick_reproductive_clock
 
-    if self.reproductive_stage == :impregnated
+    if impregnated?
       self.reproductive_clock += 1
     end
 
     if (5..200).include? self.reproductive_clock
-      self.reproductive_stage = :gestation
+      set_gestation
       self.reproductive_clock += 1
     end
 
     if self.reproductive_clock == 201
-        self.reproductive_stage = :parturition
+        set_parturition
         give_birth
         self.reproductive_clock += 1
     end
 
     if (201..260).include? self.reproductive_clock
-      self.reproductive_stage = :lactation
+      set_lactation
       self.reproductive_clock += 1
     end
 
     if self.reproductive_clock > 260
-      self.reproductive_stage = :anestrous
+      set_anestrus
       self.reproductive_clock += 1
     end
-    
+
     # Rut behavior
     if rut? and (age > 365)
-      if self.reproductive_stage == :anestrous
+      if anestrus?
         self.estrous_clock = rand(estrous_cycle_length) + 1
-        self.reproductive_stage = :di_metestrus
+        set_di_metestrus
       end
 
-      if self.reproductive_stage == :di_metestrus
+      if di_metestrus?
         self.estrous_clock += 1
-        if self.estrous_clock > self.estrous_cycle_length 
-          self.reproductive_stage = :in_estrous
+        if self.estrous_clock > self.estrous_cycle_length
+          set_estrus
           self.estrous_clock = 0
         end
       end
 
-      if self.reproductive_stage == :in_estrous
+      if estrus?
         self.estrous_clock += 1
-        if self.estrous_clock > self.estrous_cycle_length 
-          self.reproductive_stage = :di_metestrus
+        if self.estrous_clock > self.estrous_cycle_length
+          set_di_metestrus
           self.estrous_clock = 0
         end
       end

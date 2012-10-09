@@ -83,7 +83,6 @@ def initialize
 
   def go
     set_movement_rate
-    # puts world.day_of_year
     move
     bed
     mature
@@ -119,16 +118,9 @@ def initialize
 
 
   def evaluate_neighborhood_for_forage
-    puts '------------'
-    puts "current coordinates = #{self.x}, #{self.y}"
     neighborhood = neighborhood_in_radius(1)
-    puts "There are #{neighborhood.count} patches in the neighborhood"
     target = select_highest_score_of_patch_set(neighborhood)
-    puts "The selected target is #{target}"
-   # target = select_highest_score_of_patch_set(neighborhood_in_radius(1))
-    puts "Target coordinates are #{target.x}, #{target.y}"
     self.location = [(target.x + 0.5), (target.y + 0.5)]
-    puts "New location is #{self.x}, #{self.y}"
   end
 
   def select_highest_score_of_patch_set(patch_set) # need to figure out how to sort patch_set based on evaluation of food potential
