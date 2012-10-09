@@ -14,15 +14,12 @@ class MaleDeer < Deer
       if rut?
         t = t + 1
         reproduction_target = select_best_reproduction_patch 
-        # move to patch reproduction_target[0]
-        puts "reproduction target is: #{reproduction_target}"
-        # binding.pry
         if reproduction_target[:female_count] > 0      # if females around
           self.location = reproduction_target[:patch].location
-          puts 'should move to closest lady at #{reproduction_target[:patch]}'
           if reproduction_target[:male_count] > 0      # if males around
             local_male_deer = agents_in_radius_of_type(0.02, MaleDeer) # iffy, but more selective than self.patch.agents ALSO #TODO Not sure if I can select male_deer
             local_male_deer.sort! {|x,y| x.energy <=> y.energy}
+            raise 'WE FIGHT!!!!'
             if self.energy > local_male_deer[0].energy
               if self.energy > MIN_REPRODUCTIVE_ENERGY
                 attempt_to_mate
@@ -116,5 +113,14 @@ class MaleDeer < Deer
       neighborhood_data << {patch: patch, male_count: male_count, female_count: female_count}
     end
     neighborhood_data
+  end
+
+  def attempt_to_mate
+    potential_females = self.patch.agents.select{|agent| agent.kind_of?(FemaleDeer) && agent.reproductive_stage == :in_estrus}
+    return if potential_females.empty?
+    the_one = potential_females.shuffle.max_by(&:energy).first
+    if rand < 0.8
+      the_one.reproductive_stage = :impregnated
+    end
   end
 end

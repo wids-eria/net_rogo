@@ -74,19 +74,19 @@ attr_accessor :reproductive_stage, :reproductive_clock, :estrous_clock
         self.reproductive_stage = :di_metestrus
       end
 
-      if reproductive_stage == :di_metestrus
-        estrous_clock += 1
-        if estrous_clock > estrous_cycle_length 
-          reproductive_stage = :in_estrous
-          estrous_clock = 0
+      if self.reproductive_stage == :di_metestrus
+        self.estrous_clock += 1
+        if self.estrous_clock > self.estrous_cycle_length 
+          self.reproductive_stage = :in_estrous
+          self.estrous_clock = 0
         end
       end
 
-      if reproductive_stage == :in_estrous
-        estrous_clock += 1
-        if estrous_clock > estrous_cycle_length 
-          reproductive_stage = :di_metestrus
-          estrous_clock = 0
+      if self.reproductive_stage == :in_estrous
+        self.estrous_clock += 1
+        if self.estrous_clock > self.estrous_cycle_length 
+          self.reproductive_stage = :di_metestrus
+          self.estrous_clock = 0
         end
       end
     end
