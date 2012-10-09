@@ -107,9 +107,9 @@ class MaleDeer < Deer
       male_count = 0
       # count receptive females on patch
       patch.agents.each do |agent|
-        if agent.class == :female_deer
+        if agent.kind_of? FemaleDeer
           female_count += 1
-        elsif agent.class == :male_deer
+        elsif agent.kind_of? MaleDeer
           male_count += 1
         end
       end
