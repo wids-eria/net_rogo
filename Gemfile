@@ -7,3 +7,4 @@ gem 'chunky_png'
 gem 'color'
 gem 'simple-random'
 gem "pry"
+# add metric fu
