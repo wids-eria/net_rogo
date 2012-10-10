@@ -19,7 +19,6 @@ class FemaleDeer < Deer
     forage
     tick_reproductive_clock
     check_death
-    self.energy -= 1
   end
 
 

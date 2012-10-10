@@ -82,38 +82,32 @@ def initialize
 
 
   def go
-    set_movement_rate
     move
-    bed
+    # TODO bed
     mature
-    # check_birth
     check_death
   end
 
-  def set_movement_rate
-   self.movement_rate = 6
-   #if rut?
-   #  movement_rate = 6.5
-   #elsif spring_summer?
-
-   #else
-   #  # Default to fall_winter
-   #  movement_rate = 6
-   #  #  raise Error, 'Current day of year is outside defined season ranges for deer (calculating movement rate)'
-   #end
-  end
-
-
-
-
 
   def bed
+    raise 'define bed'
     if rut?
     elsif spring_summer?
     else
       # Default to fall_winter behavior
       # raise ArgumentError, 'Current day of year is outside defined season ranges for deer (bedding)'
     end
+  end
+
+  def move_to_cover
+    raise 'calling empty method'
+    # evaluate_steps; permits longer term decision analysis
+    # target = evaluate_neighborhood_for_bedding(neighborhood_in_radius(1))
+    # self.location = [target.x, target.y]
+  end
+
+  def evaluate_neighborhood_for_bedding(patchset)
+    patchset.sort { |x, y| assess_bedding_potential(x) <=> assess_bedding_potential(y) }
   end
 
 
@@ -130,19 +124,6 @@ def initialize
       patch_set.sort! { |x, y| assess_fall_winter_food_potential(x) <=> assess_fall_winter_food_potential(y) }
     end
     patch_set[0]                        # should return first element of array, which should now be sorted by season-specific food_index
-  end
-
-
-  def move_to_cover
-    raise 'calling empty method'
-    # evaluate_steps; permits longer term decision analysis
-    # target = evaluate_neighborhood_for_bedding(neighborhood_in_radius(1))
-    # self.location = [target.x, target.y]
-  end
-
-
-  def evaluate_neighborhood_for_bedding(patchset)
-    patchset.sort { |x, y| assess_bedding_potential(x) <=> assess_bedding_potential(y) }
   end
 
 
