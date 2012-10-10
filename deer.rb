@@ -120,13 +120,12 @@ def initialize
     self.location = [(patch.x + 0.5), (patch.y + 0.5)]
   end
 
-  def select_highest_score_of_patch_set(patch_set) # need to figure out how to sort patch_set based on evaluation of food potential
-    if spring_summer?
+  def select_highest_score_of_patch_set(patch_set)     if spring_summer?
       patch_set.sort! { |x, y| assess_spring_summer_food_potential(x) <=> assess_spring_summer_food_potential(y) }
     else
       patch_set.sort! { |x, y| assess_fall_winter_food_potential(x) <=> assess_fall_winter_food_potential(y) }
     end
-    patch_set[0]                        # should return first element of array, which should now be sorted by season-specific food_index
+  patch_set[0]
   end
 
 

@@ -5,14 +5,16 @@ require 'pry'
 class MaleDeer < Deer
 #TODO: set active_hours and movement_rates according to time of year or reproductive phase
 
+  BASE_HOURLY_METABOLIC_RATE = 1 # one hours caloric cost
   MIN_REPRODUCTIVE_ENERGY = 10
   attr_accessor :min_male_reproductive_energy
 
   def move
     t = 0
     while t < self.active_hours
+      metabolize_hourly
+      t = t + 1
       if rut?
-        t = t + 1
         reproduction_target = select_best_reproduction_patch 
         if reproduction_target[:female_count] > 0      # if females around
           self.location = reproduction_target[:patch].location
@@ -20,6 +22,9 @@ class MaleDeer < Deer
             local_male_deer = agents_in_radius_of_type(0.02, MaleDeer) # iffy, but more selective than self.patch.agents ALSO #TODO Not sure if I can select male_deer
             jousting_partner = local_male_deer.max_by(&:energy)
             if self.energy > jousting_partner.energy # this is the fight right here
+              # implement additional energy cost for fighters
+              self.energy -= 0.25
+              jousting_partner.energy -= 0.25
               if self.energy > MIN_REPRODUCTIVE_ENERGY
                 attempt_to_mate
               else
@@ -49,11 +54,9 @@ class MaleDeer < Deer
       elsif spring_summer?
         move_to_forage_patch
         eat
-        t = t + 1
       else # fall by default
         move_to_forage_patch
         eat
-        t = t + 1
       # else
       #   raise ArgumentError, 'Current day of year is outside defined season ranges for deer (movement)'
       end
@@ -108,4 +111,17 @@ class MaleDeer < Deer
   def succesfully_mated?
     rand < 0.8
   end
+
+
+  def hourly_metabolic_rate
+    modifier = 1
+    BASE_HOURLY_METABOLIC_RATE * modifier
+  end
+
+
+  def metabolize_hourly
+    self.energy -= hourly_metabolic_rate
+  end
+
+
 end
