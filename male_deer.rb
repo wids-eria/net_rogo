@@ -62,19 +62,6 @@ class MaleDeer < Deer
     end
     evaluate_neighborhood_for_bedding(neighborhood_in_radius(1))
     move_to_cover
-    self.age += 1
-  end
-
-  def active_hours
-    if rut?
-      12
-    elsif spring_summer?
-      8
-    else
-      6
-      # Default to fall_winter behavior
-      # raise ArgumentError, 'Current activity level is outside defined season ranges for deer'
-    end
   end
 
 

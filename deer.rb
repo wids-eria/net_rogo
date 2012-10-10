@@ -133,8 +133,8 @@ def initialize
   end
 
 
-
   def move_to_cover
+    raise 'calling empty method'
     # evaluate_steps; permits longer term decision analysis
     # target = evaluate_neighborhood_for_bedding(neighborhood_in_radius(1))
     # self.location = [target.x, target.y]
@@ -146,10 +146,8 @@ def initialize
   end
 
 
-
-
   def eat
-
+    raise 'calling empty method'
   end
 
 
@@ -195,6 +193,7 @@ def initialize
 
 
   def mature
+    self.age += 1
   end
 
 
@@ -220,6 +219,19 @@ def initialize
       ((rand * 0.20) + 0.62) ** (1.0 / 365)
     else
      ((rand * 0.19) + 0.57) ** (1.0 / 365)
+    end
+  end
+
+
+  def active_hours
+    if rut?
+      12
+    elsif spring_summer?
+      8
+    else
+      6
+      # Default to fall_winter behavior
+      # raise ArgumentError, 'Current activity level is outside defined season ranges for deer'
     end
   end
 

@@ -70,8 +70,7 @@ describe MaleDeer do
 
 
   it 'counts the number of agents around it' do
-    male_deer.agents_in_radius(1).count.should == 1
-    male_deer.agents_in_radius(1).should == [male_deer_2]
+    male_deer.agents_in_radius(1).count.should == 3
   end
 
 
