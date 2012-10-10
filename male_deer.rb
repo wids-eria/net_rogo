@@ -47,16 +47,13 @@ class MaleDeer < Deer
             local_females.shuffle.max_by(&:energy) # move towards one of females (preferably receptive ones)
             self.location = [local_females[0].x, local_females[0].y]
           else
-            move_to_forage_patch
-            eat
+            move_to_forage_patch_and_eat
           end
         end
       elsif spring_summer?
-        move_to_forage_patch
-        eat
+        move_to_forage_patch_and_eat
       else # fall by default
-        move_to_forage_patch
-        eat
+        move_to_forage_patch_and_eat
       # else
       #   raise ArgumentError, 'Current day of year is outside defined season ranges for deer (movement)'
       end
@@ -73,7 +70,7 @@ class MaleDeer < Deer
     count_data = find_male_female_counts(neighborhood)
     count_data.shuffle.sort_by do |patch| 
       if patch[:female_count] == 0 # if there are no females
-       move_to_forage_patch 
+       move_to_forage_patch_and_eat
       else
         patch[:male_count].to_f / patch[:female_count].to_f
       end

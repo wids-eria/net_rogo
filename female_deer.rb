@@ -105,8 +105,7 @@ class FemaleDeer < Deer
 
   def forage
     self.active_hours.each do
-      move_to_forage_patch
-      eat
+      move_to_forage_patch_and_eat
       metabolize_hourly
     end
 
