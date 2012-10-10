@@ -114,7 +114,10 @@ def initialize
   def evaluate_neighborhood_for_forage
     neighborhood = neighborhood_in_radius(1)
     target = select_highest_score_of_patch_set(neighborhood)
-    self.location = [(target.x + 0.5), (target.y + 0.5)]
+  end
+
+  def move_to_patch_center patch
+    self.location = [(patch.x + 0.5), (patch.y + 0.5)]
   end
 
   def select_highest_score_of_patch_set(patch_set) # need to figure out how to sort patch_set based on evaluation of food potential
@@ -129,6 +132,7 @@ def initialize
 
   def eat
     raise 'calling empty method'
+
   end
 
 

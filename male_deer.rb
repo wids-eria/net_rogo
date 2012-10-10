@@ -18,9 +18,8 @@ class MaleDeer < Deer
           self.location = reproduction_target[:patch].location
           if reproduction_target[:male_count] > 0      # if males around
             local_male_deer = agents_in_radius_of_type(0.02, MaleDeer) # iffy, but more selective than self.patch.agents ALSO #TODO Not sure if I can select male_deer
-            local_male_deer.sort! {|x,y| x.energy <=> y.energy}
-            raise 'WE FIGHT!!!!'
-            if self.energy > local_male_deer[0].energy
+            jousting_partner = local_male_deer.max_by(&:energy)
+            if self.energy > jousting_partner.energy # this is the fight right here
               if self.energy > MIN_REPRODUCTIVE_ENERGY
                 attempt_to_mate
               else
@@ -36,7 +35,7 @@ class MaleDeer < Deer
               eat
             end
           end
-        else 
+        else
           local_females = agents_in_radius_of_type(2, FemaleDeer)
           local_females = local_females.select(&:estrus?)
           if local_females.count > 0

@@ -8,6 +8,22 @@ class FemaleDeer < Deer
   attr_accessor :reproductive_stage, :reproductive_clock, :estrous_clock, :estrous_cycle_length
   #TODO: set active_hours and movement_rates according to time of year or reproductive phase
 
+  BASE_HOURLY_METABOLIC_RATE = 1 # one hours caloric cost
+
+  def hourly_metabolic_rate
+    if impregnated? || anestrus? || estrus? || di_metestrus?
+      modifier = 1.0
+    elsif gestation? || lactation?
+      modifier = 1.5
+    elsif parturition?
+      modifier = 3.0
+    else
+      raise 'unimplemented'
+    end
+
+    BASE_HOURLY_METABOLIC_RATE * modifier
+  end
+
   def initialize
     super
     self.reproductive_clock = 0
@@ -17,16 +33,9 @@ class FemaleDeer < Deer
   end
 
   def move
-    forage
     tick_reproductive_clock
+    forage
     check_death
-  end
-
-
-  def tick_reproductive_clock
-    if impregnated?
-      self.reproductive_clock += 1
-    end
   end
 
 
@@ -95,24 +104,24 @@ class FemaleDeer < Deer
 
 
   def forage
-    t = 0
-    while t < self.active_hours 
-      if rut?
-        evaluate_neighborhood_for_forage
-        eat
-        t = t + 1
-      elsif spring_summer?
-        evaluate_neighborhood_for_forage
-        eat
-        t = t + 1
-      else # fall by default
-        evaluate_neighborhood_for_forage
-        eat
-        t = t + 1
-      end
+    self.active_hours.each do
+      move_to_forage_patch
+      eat
+      metabolize_hourly
     end
+
     evaluate_neighborhood_for_bedding(neighborhood_in_radius(1))
     move_to_cover
+  end
+
+
+  def metabolize_hourly
+    self.energy -= hourly_metabolic_rate
+  end
+
+  def move_to_forage_patch
+    patch = evaluate_neighborhood_for_forage
+    move_to_patch_center patch
   end
 
 end
