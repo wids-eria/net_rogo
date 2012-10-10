@@ -1,4 +1,5 @@
 require File.dirname(__FILE__) + '/deer'
+require File.dirname(__FILE__) + '/male_deer'
 require File.dirname(__FILE__) + '/deer_reproductive_stages'
 
 class FemaleDeer < Deer

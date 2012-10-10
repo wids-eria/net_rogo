@@ -40,4 +40,12 @@ describe FemaleDeer do
     female_deer.set_lactation
     female_deer.lactation?.should == true
   end
+
+  it 'gives birth' do
+    previous_count = world.deers.count
+
+    female_deer.give_birth
+    world.deers.count.should > previous_count
+
+  end
 end
