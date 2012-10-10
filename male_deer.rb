@@ -42,17 +42,16 @@ class MaleDeer < Deer
             local_females.shuffle.max_by(&:energy) # move towards one of females (preferably receptive ones)
             self.location = [local_females[0].x, local_females[0].y]
           else
-          # change location
-            evaluate_neighborhood_for_forage
+            move_to_forage_patch
             eat
           end
         end
       elsif spring_summer?
-        evaluate_neighborhood_for_forage
+        move_to_forage_patch
         eat
         t = t + 1
       else # fall by default
-        evaluate_neighborhood_for_forage
+        move_to_forage_patch
         eat
         t = t + 1
       # else
@@ -71,7 +70,7 @@ class MaleDeer < Deer
     count_data = find_male_female_counts(neighborhood)
     count_data.shuffle.sort_by do |patch| 
       if patch[:female_count] == 0 # if there are no females
-        0.0
+       move_to_forage_patch 
       else
         patch[:male_count].to_f / patch[:female_count].to_f
       end

@@ -119,11 +119,6 @@ class FemaleDeer < Deer
     self.energy -= hourly_metabolic_rate
   end
 
-  def move_to_forage_patch
-    patch = evaluate_neighborhood_for_forage
-    move_to_patch_center patch
-  end
-
 end
 
 
