@@ -104,13 +104,13 @@ class FemaleDeer < Deer
 
 
   def forage
-    self.active_hours.each do
+    self.active_hours.times.each do
       move_to_forage_patch_and_eat
       metabolize_hourly
     end
 
     evaluate_neighborhood_for_bedding(neighborhood_in_radius(1))
-    move_to_cover
+    # move_to_cover
   end
 
 

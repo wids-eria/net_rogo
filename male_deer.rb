@@ -15,12 +15,16 @@ class MaleDeer < Deer
       metabolize_hourly
       t = t + 1
       if rut?
+        # binding.pry
         reproduction_target = select_best_reproduction_patch 
+        puts "location of reproduction target = #{reproduction_target[:patch].location}"
         if reproduction_target[:female_count] > 0      # if females around
+          puts 'ladies detected'
           self.location = reproduction_target[:patch].location
           if reproduction_target[:male_count] > 0      # if males around
-            local_male_deer = agents_in_radius_of_type(0.02, MaleDeer) # iffy, but more selective than self.patch.agents ALSO #TODO Not sure if I can select male_deer
-            jousting_partner = local_male_deer.max_by(&:energy)
+            puts "number of males around = #{reproduction_target[:male_count]}"
+            jousting_partner = select_jousting_partner
+            puts "jousting_partner = #{jousting_partner.object_id}"
             if self.energy > jousting_partner.energy # this is the fight right here
               # implement additional energy cost for fighters
               self.energy -= 0.25
@@ -41,6 +45,7 @@ class MaleDeer < Deer
             end
           end
         else
+          puts 'no ladies here!'
           local_females = agents_in_radius_of_type(2, FemaleDeer)
           local_females = local_females.select(&:estrus?)
           if local_females.count > 0
@@ -59,7 +64,18 @@ class MaleDeer < Deer
       end
     end
     evaluate_neighborhood_for_bedding(neighborhood_in_radius(1))
-    move_to_cover
+    # move_to_cover
+  end
+
+
+  def select_jousting_partner
+    local_deers = []
+    self.patch.agents.each do |deer|
+      if deer.kind_of? MaleDeer
+        local_deers << deer
+      end
+    end
+    local_deers.max_by(&:energy)
   end
 
 
@@ -68,11 +84,11 @@ class MaleDeer < Deer
     # identify location with highest fertile female : male ratio
     # for each patch, count number of receptive females and number of males
     count_data = find_male_female_counts(neighborhood)
-    count_data.shuffle.sort_by do |patch| 
+    count_data = count_data.shuffle.sort_by do |patch| 
       if patch[:female_count] == 0 # if there are no females
-       move_to_forage_patch_and_eat
+        0
       else
-        patch[:male_count].to_f / patch[:female_count].to_f
+        -patch[:female_count].to_f / patch[:male_count].to_f
       end
     end
     count_data[0]
@@ -87,7 +103,9 @@ class MaleDeer < Deer
       # count receptive females on patch
       patch.agents.each do |agent|
         if agent.kind_of? FemaleDeer
-          female_count += 1
+          if agent.estrus?
+            female_count += 1
+          end
         elsif agent.kind_of? MaleDeer
           male_count += 1
         end

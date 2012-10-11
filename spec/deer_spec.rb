@@ -16,9 +16,9 @@ describe MaleDeer do
     male_deer.location = [1.5, 1.5]
     male_deer_2.location = [1.1, 1.1]
     female_deer.location = [2.5, 2.5]
-    female_deer.set_estrus
+    female_deer.age = 366
     female_deer_2.location = [0.5, 0.5]
-    female_deer_2.set_di_metestrus
+    female_deer.age = 366
   end
 
 # describe and before executed immediately prior to each it (to set it up)
@@ -28,9 +28,10 @@ describe MaleDeer do
   end
 
   describe 'ticks during rut' do
-    # TODO: HAVE TO ADD A FEMALE DEER, SHOULD MOVE TOWARD THAT CELL EVERY TIME
     before do
-      world.stubs :day_of_year => 270 
+      world.stubs :day_of_year => 270
+      male_deer.stubs :active_hours => 1
+      male_deer_2.stubs :active_hours => 1
     end
 
 
@@ -40,15 +41,28 @@ describe MaleDeer do
 
 
     it 'chases the ladies' do
+      male_deer.stubs :succesfully_mated? => true
+      female_deer.stubs :reproductive_stage => :estrus
+      female_deer_2.stubs :reproductive_stage => :di_metestrus
+      puts "beginning location = #{male_deer.location}"
       male_deer.tick
+      puts "end location = #{male_deer.location}"
       [female_deer.patch].include?(male_deer.patch).should == true
     end
   end
 
 
   it 'does 365 ticks' do
-    365.times{ world.tick }
-  end
+    365.times{ world.tick 
+      world.stubs :day_of_year => world.day_of_year + 1
+    puts "male deer 1 energy = #{male_deer.energy}"
+    puts "male deer 2 energy = #{male_deer_2.energy}"
+    puts "female deer 1 energy = #{female_deer.energy}"
+    puts "female_deer 2 energy = #{female_deer_2.energy}" 
+    puts "female_deer 1 reproductive stage = #{female_deer.reproductive_stage}"
+    puts "female_deer 2 reproductive stage = #{female_deer_2.reproductive_stage}"
+    }
+ end
 
 
   it 'dies' do
@@ -266,25 +280,25 @@ describe MaleDeer do
         male_deer.forest_structure_index(bunk_patch).should be_within(0.00001).of(0.0)              # 2 * ((0.0 + 0.0 + 0.0) / 3) + 0.0) / 2 = 0.0
       end
 
+
+      it 'returns the suitability for an unhappy patch in winter' do
+        # happy_little_patch.land_cover_class = :developed_high_intensity
+        male_deer.assess_fall_winter_food_potential(bunk_patch).should == 0
+      end
+
+      it 'returns the correct number of patches in neighborhood' do
+        male_deer.neighborhood_in_radius(1).kind_of?(Array).should be_true
+        male_deer.neighborhood_in_radius(1).count.should == 8
+      end
+      
+      it 'selects the patch with highest score' do
+        patches = Array[young_coniferous, medium_coniferous, old_coniferous, young_deciduous, medium_deciduous, old_deciduous, young_mixed, medium_mixed, old_mixed]
+        # male_deer.select_highest_score_of_patch_set(patches).should == young_coniferous
+        #binding.pry
+        male_deer.patch_with_highest_score(patches)[0].should == young_coniferous
+      end
+
     end
-
-
-    it 'returns the suitability for an unhappy patch in winter' do
-      # happy_little_patch.land_cover_class = :developed_high_intensity
-      male_deer.assess_fall_winter_food_potential(bunk_patch).should == 0
-    end
-
-    it 'returns the correct number of patches in neighborhood' do
-      male_deer.neighborhood_in_radius(1).kind_of?(Array).should be_true
-      male_deer.neighborhood_in_radius(1).count.should == 8
-    end
-
-    it 'selects the patch with highest score' do
-      patches = Array[young_coniferous, medium_coniferous, old_coniferous, young_deciduous, medium_deciduous, old_deciduous, young_mixed, medium_mixed, old_mixed]
-      male_deer.select_highest_score_of_patch_set(patches).should == young_coniferous
-    end
-
-
  end
 
 
@@ -344,12 +358,9 @@ describe MaleDeer do
   end
 
 
-  it 'moves'
   it 'yards'
   it 'eats'
   it 'matures'
-  it 'chases ladies during rut'
-  it 'picks a destination after evaluating the neighborhood'
   it 'seeks thermal cover in winter'
 
 

@@ -122,11 +122,11 @@ def initialize
 
   def patch_with_highest_score(patch_set)
     if spring_summer?
-      patch_set.sort! { |x, y| assess_spring_summer_food_potential(x) <=> assess_spring_summer_food_potential(y) }
-      return_value = [patch_set[0], assess_spring_summer_food_potential(patch_set[0])]
+      sorted_patches = patch_set.shuffle.sort { |y, x| assess_spring_summer_food_potential(x) <=> assess_spring_summer_food_potential(y) }
+      return_value = [sorted_patches[0], assess_spring_summer_food_potential(sorted_patches[0])]
     else
-      patch_set.sort! { |x, y| assess_fall_winter_food_potential(x) <=> assess_fall_winter_food_potential(y) }
-      return_value = [patch_set[0], assess_fall_winter_food_potential(patch_set[0])]
+      sorted_patches = patch_set.shuffle.sort { |y, x| assess_fall_winter_food_potential(x) <=> assess_fall_winter_food_potential(y) }
+      return_value = [sorted_patches[0], assess_fall_winter_food_potential(sorted_patches[0])]
     end
   return_value
   end
@@ -134,9 +134,9 @@ def initialize
 
   def eat
     if spring_summer?
-      self.energy += 2 # baseless approximation of consumption
+      self.energy += 4 # baseless approximation of consumption
     else
-      self.energy += 1.5
+      self.energy += 3
     end
   end
 
@@ -191,6 +191,9 @@ def initialize
     if die_from_mortality_trial? || die_from_old_age?
       world.deers.delete self
     end
+    if energy < 0
+      world.deers.delete self
+    end
   end
 
 
@@ -229,7 +232,8 @@ def initialize
   def move_to_forage_patch_and_eat
     target = evaluate_neighborhood_for_forage
     move_to_patch_center target[0]
-    puts "food index of target is #{target[1]}"
+    #puts "food index of target is #{target[1]}"
+    #puts "location of target is #{target[0].location}"
     if target[1] > 2 # Random estimate of what would be a good score
       eat
     end
