@@ -55,7 +55,7 @@ describe MaleDeer do
   it 'does 365 ticks' do
     365.times{ world.tick 
       world.stubs :day_of_year => world.day_of_year + 1
-    puts "doy = #{world.day_of_year}"
+      puts "doy = #{world.day_of_year}"
     puts "male deer 1 energy = #{male_deer.energy}"
     puts "male deer 2 energy = #{male_deer_2.energy}"
     puts "female deer 1 energy = #{female_deer.energy}"

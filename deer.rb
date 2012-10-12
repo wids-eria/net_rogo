@@ -122,11 +122,31 @@ def initialize
 
   def patch_with_highest_score(patch_set)
     if spring_summer?
-      sorted_patches = patch_set.shuffle.sort { |y, x| assess_spring_summer_food_potential(x) <=> assess_spring_summer_food_potential(y) }
-      return_value = [sorted_patches[0], assess_spring_summer_food_potential(sorted_patches[0])]
+      if self.energy > 100
+        random_patch = patch_set.shuffle[0]
+        if self.passable?(random_patch)
+          return_value = [random_patch, assess_spring_summer_food_potential(random_patch)]
+        else
+          sorted_patches = patch_set.shuffle.sort { |y, x| assess_spring_summer_food_potential(x) <=> assess_spring_summer_food_potential(y) }
+          return_value = [sorted_patches[0], assess_spring_summer_food_potential(sorted_patches[0])]
+        end
+      else
+        sorted_patches = patch_set.shuffle.sort { |y, x| assess_spring_summer_food_potential(x) <=> assess_spring_summer_food_potential(y) }
+        return_value = [sorted_patches[0], assess_spring_summer_food_potential(sorted_patches[0])]
+      end
     else
-      sorted_patches = patch_set.shuffle.sort { |y, x| assess_fall_winter_food_potential(x) <=> assess_fall_winter_food_potential(y) }
-      return_value = [sorted_patches[0], assess_fall_winter_food_potential(sorted_patches[0])]
+      if self.energy > 100
+        random_patch = patch_set.shuffle[0]
+        if self.passable?(random_patch)
+          return_value = [random_patch, assess_fall_winter_food_potential(random_patch)]
+        else
+          sorted_patches = patch_set.shuffle.sort { |y, x| assess_fall_winter_food_potential(x) <=> assess_fall_winter_food_potential(y) }
+          return_value = [sorted_patches[0], assess_fall_winter_food_potential(sorted_patches[0])]
+        end
+      else
+        sorted_patches = patch_set.shuffle.sort { |y, x| assess_fall_winter_food_potential(x) <=> assess_fall_winter_food_potential(y) }
+        return_value = [sorted_patches[0], assess_fall_winter_food_potential(sorted_patches[0])]
+      end
     end
   return_value
   end
@@ -134,9 +154,9 @@ def initialize
 
   def eat
     if spring_summer?
-      self.energy += 4 # baseless approximation of consumption
+      self.energy += 3 # baseless approximation of consumption
     else
-      self.energy += 3
+      self.energy += 2 
     end
   end
 
@@ -234,7 +254,7 @@ def initialize
     move_to_patch_center target[0]
     #puts "food index of target is #{target[1]}"
     #puts "location of target is #{target[0].location}"
-    if target[1] > 2 # Random estimate of what would be a good score
+    if target[1] > 0.5 # Random estimate of what would be a good score
       eat
     end
   end
