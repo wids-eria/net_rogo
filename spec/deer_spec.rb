@@ -55,6 +55,7 @@ describe MaleDeer do
   it 'does 365 ticks' do
     365.times{ world.tick 
       world.stubs :day_of_year => world.day_of_year + 1
+    puts "doy = #{world.day_of_year}"
     puts "male deer 1 energy = #{male_deer.energy}"
     puts "male deer 2 energy = #{male_deer_2.energy}"
     puts "female deer 1 energy = #{female_deer.energy}"
@@ -196,15 +197,16 @@ describe MaleDeer do
 
 
       it 'evalutes the suitability of patches in winter' do
-        male_deer.assess_fall_winter_food_potential(young_coniferous).should == 6.0
-        male_deer.assess_fall_winter_food_potential(medium_coniferous).should == 2.7
-        male_deer.assess_fall_winter_food_potential(old_coniferous).should == 3.6
-        male_deer.assess_fall_winter_food_potential(young_deciduous).should == 4.62
-        male_deer.assess_fall_winter_food_potential(medium_deciduous).should be_within(0.00001).of(2.16)
-        male_deer.assess_fall_winter_food_potential(old_deciduous).should == 2.55
-        male_deer.assess_fall_winter_food_potential(young_mixed).should == 2.04
-        male_deer.assess_fall_winter_food_potential(medium_mixed).should be_within(0.0001).of(0.63)
-        male_deer.assess_fall_winter_food_potential(old_mixed).should == 0.72
+        # ((2 * browse_index(patch) + mast_index(patch)) / 3) * site_productivity_index(patch)
+        male_deer.assess_fall_winter_food_potential(young_coniferous).should be_within(0.00001).of(0.666666)
+        male_deer.assess_fall_winter_food_potential(medium_coniferous).should == 0.3
+        male_deer.assess_fall_winter_food_potential(old_coniferous).should == 0.4
+        male_deer.assess_fall_winter_food_potential(young_deciduous).should be_within(0.000001).of(0.51333333)
+        male_deer.assess_fall_winter_food_potential(medium_deciduous).should == be_within(0.000001).of(0.24)
+        male_deer.assess_fall_winter_food_potential(old_deciduous).should be_within(0.000001).of(0.28333333)
+        male_deer.assess_fall_winter_food_potential(young_mixed).should be_within(0.00001).of(0.2266666666)
+        male_deer.assess_fall_winter_food_potential(medium_mixed).should be_within(0.000001).of(0.07)
+        male_deer.assess_fall_winter_food_potential(old_mixed).should == 0.08
       end
 
       it 'provides a vegetation type index' do

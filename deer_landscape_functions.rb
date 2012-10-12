@@ -51,7 +51,7 @@ module DeerLandscapeFunctions
      #forest_composition_index x forest_structure_index x site_productivity_index
      forest_index = EXTENDED_HABITAT_ATTRIBUTES[patch.land_cover_class][:forest]
      if forest_index > 0
-       (2 * browse_index(patch) + mast_index(patch)) * 3 * site_productivity_index(patch)
+       ((2 * browse_index(patch) + mast_index(patch)) / 3) * site_productivity_index(patch)
      else
        0
      end
