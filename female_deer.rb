@@ -88,6 +88,10 @@ class FemaleDeer < Deer
           self.estrous_clock = 0
         end
       end
+    else
+      if estrus? || di_metestrus?
+        set_anestrus
+      end
     end
   end
 
