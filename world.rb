@@ -77,11 +77,29 @@ class World
     self.sync_from_db
     
     self.current_date = Date.new(db_world.year_current)
+    
+    #load in tiles
     self.patches = Array.new(width) { Array.new(height) }
     db_world.resource_tiles.each do |rt|
       patch = Patch.new rt
       set_patch(rt.x, rt.y, patch)
     end
+    
+    #load in martens
+    db_male_martens = DBBindings::MaleMarten.where(:world_id => db_world.id)
+    db_female_martens = DBBindings::FemaleMarten.where(:world_id => db_world.id)
+    
+    db_male_martens.each do |db_male_marten|
+      marten = MaleMarten.spawn_at(self, db_male_marten.x, db_male_marten.y)
+      marten.age = 730
+    end
+    
+    db_female_martens.each do |db_female_marten|
+      marten = FemaleMarten.spawn_at(self, db_female_marten.x, db_female_marten.y)
+      marten.age = 730
+    end
+    
+    
   end
 
   def initialize_with_test_data

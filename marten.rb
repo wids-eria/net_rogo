@@ -50,7 +50,7 @@ class Marten
 
   def self.spawn_population(world, count = 100)
     patches_for_spawning = world.all_patches.select{|patch| can_spawn_on? patch}
-    raise 'wat' if patches_for_spawning.empty?
+    raise 'no patches available to spawn on' if patches_for_spawning.empty?
     count.times.collect do
       patch = patches_for_spawning.sample
       spawn_at world, patch.center_x, patch.center_y
@@ -58,7 +58,6 @@ class Marten
   end
 
   def self.spawn_at(world,x,y)
-
     marten = self.new
     marten.location = [x,y]
     marten.previous_location = [x,y]
@@ -157,6 +156,9 @@ class Marten
     self.class.passable? patch
   end
 
+  def self.can_spawn_on?(patch)
+    self.passable?(patch) && self.habitat_suitability_for(patch) == 1
+  end
   
 
   def walk_forward(distance)
@@ -298,6 +300,20 @@ class Marten
   end
 
 
+  def stay_probability
+    (1 - BASE_PATCH_ENTRANCE_PROBABILITY) * (self.energy / MAX_ENERGY)
+  end
+
+
+  def should_leave?
+    stay_probability < rand
+  end
+  
+  def desirable_patches
+    #neighborhood_in_radius(1).select{|patch| patch_desirable? patch }
+    neighborhood.select{|patch| patch_desirable? patch }
+  end
+
   def metabolize
     if growing_season?
       self.energy -= 857 # field metabolic rate (above)
@@ -336,5 +352,29 @@ class Marten
 
   def remember_previous_location
     self.previous_location = location
+  end
+  
+  def move_one_patch
+    target = patch_ahead 1
+
+    # faced patch desirable
+    # faced patch force move
+    #
+    # find desirable neighboring patch
+    # no desirable, about face
+
+    if passable?(target)
+      if patch_desirable?(target)
+        walk_forward 1
+        self.random_walk_suitable_count += 1
+      elsif should_leave?
+        walk_forward 1
+        self.random_walk_unsuitable_count += 1
+      else
+        select_forage_patch_and_move
+      end
+    else
+      select_forage_patch_and_move
+    end
   end
 end

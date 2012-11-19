@@ -30,7 +30,7 @@ module DeerLandscapeFunctions
   end
 
  def forest_composition_index
-   forest_type_index = HABITAT_ATTRIBUTES[patch.land_cover_class][:forest_type_index]
+   forest_type_index = HABITAT_ATTRIBUTES[self.land_cover_class][:forest_type_index]
    # TODO: currently cannot differentiate between conifer types; would be useful to implement general moisture regime (mesic/xeric)
      # Northern Hemlock, White Cedar = 1 (lowland/mesic conifers)
      # spruce and fir = 0.8 (woody wetlands)

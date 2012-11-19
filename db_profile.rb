@@ -21,22 +21,13 @@ puts "Using World ID = #{world_id}"
 
 puts 'world'
 world = World.import_from_db(DBBindings::World.find world_id)
-puts "... width = #{world.width}, height = #{world.height}"
-
-
-puts "Nothing below this has been implemented"
-return
-
-
 world.job_name = Time.now.to_i.to_s
-#world.to_png
 
-puts 'spawning'
-MaleMarten.spawn_population world, 100
-FemaleMarten.spawn_population world, 100
-world.martens.each do |marten|
-  marten.age = 730
-end
+puts "\twidth = #{world.width}, height = #{world.height}"
+
+
+
+#world.to_png
 
 #RubyProf.start
 

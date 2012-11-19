@@ -69,6 +69,7 @@ class Patch
 
     if resource_tile
       use_correspondent resource_tile
+      sync_from_db
       self.vole_population ||= self.max_vole_pop 
       self.land_cover_class = resource_tile.land_cover_type
     else

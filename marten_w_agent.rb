@@ -2,8 +2,6 @@ $log = Logger.new("marten_events.log")
 
 class Marten < Agent
 
-class Marten
-
   MAX_ENERGY = 3334.8
   BASE_PATCH_ENTRANCE_PROBABILITY = 0.03
   # approximate max energy (Kj) storage in reserves
