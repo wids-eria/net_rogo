@@ -1,10 +1,11 @@
 require 'set'
+require File.dirname(__FILE__) + '/db_connector'
+require File.dirname(__FILE__) + '/db_models/resource_tile'
 
 class Patch
-  
   require File.dirname(__FILE__) + '/deer_landscape_functions'
   include DeerLandscapeFunctions
-
+  
   attr_accessor :x, :y
   attr_accessor :marten, :marten_scent_age
   attr_accessor :land_cover_class
@@ -14,6 +15,9 @@ class Patch
   attr_accessor :vole_population
   attr_accessor :deer_browse
   attr_accessor :deer_fall_winter_food, :deer_spring_summer_food, :deer_thermal_cover
+  
+  include DatabaseSync
+  sync_fields :x, :y, :vole_population
 
   MAX_VOLE_POP = 13.9
   UNHINDERED_VOLE_GROWTH_RATE = 0.00344
@@ -54,14 +58,23 @@ class Patch
              :excluded => [0, 0, 0]}
 
 
-  def initialize
-    self.land_cover_class = :barren
+  def initialize(resource_tile = nil)
     self.max_vole_pop = MAX_VOLE_POP
-    self.vole_population = self.max_vole_pop
     self.deer_fall_winter_food = 0
     self.deer_spring_summer_food = 0
     self.deer_thermal_cover = 0
+    self.site_index = 80
+
     @agents = Set.new
+
+    if resource_tile
+      use_correspondent resource_tile
+      self.vole_population ||= self.max_vole_pop 
+      self.land_cover_class = resource_tile.land_cover_type
+    else
+      self.land_cover_class = :barren
+      self.vole_population = self.max_vole_pop
+    end    
   end
 
   def add_agent(agent)

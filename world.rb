@@ -27,15 +27,67 @@ end
 class World
   attr_accessor :height, :width, :patches, :martens, :deers, :current_date, :tick_count
   attr_accessor :job_name
+  
+  include DatabaseSync
+  sync_fields :height, :width
+  
+  def self.import_from_db(db_world)
+    world = self.new
+    world.initialize_with_db_data(db_world)
+    
+    world
+  end
 
-  def initialize(options = {})
-    self.height = options[:height]
-    self.width = options[:width]
-    self.current_date = Date.new
+  def self.import(filename)
+    csv_rows = []
+    CSV.foreach(filename) { |row| csv_rows << row }
+    headers = csv_rows.shift
+    x_pos = headers.index('ROW')
+    y_pos = headers.index('COL')
+    land_cover_pos = headers.index('LANDCOV2006')
+
+    width  = csv_rows.collect{|row| row[x_pos].to_i}.max + 1
+    height = csv_rows.collect{|row| row[y_pos].to_i}.max + 1
+
+    world = self.new
+    world.initialize_with_test_data(width: width, height: height)
+
+    csv_rows.each do |csv_row|
+      x = csv_row[x_pos].to_i
+      y = csv_row[y_pos].to_i
+      cover_code = csv_row[land_cover_pos].to_i
+      patch = world.patch(x,y)
+      patch.land_cover_from_code cover_code
+    end
+
+    puts world.all_patches.collect{|patch| patch.land_cover_class }.uniq.inspect
+
+    world
+  end
+
+  def initialize
     self.martens = []
     self.deers = []
     self.tick_count = 0
     self.job_name = "name_me"
+  end
+
+  def initialize_with_db_data(db_world)
+    self.use_correspondent db_world
+    self.sync_from_db
+    
+    self.current_date = Date.new(db_world.year_current)
+    self.patches = Array.new(width) { Array.new(height) }
+    db_world.resource_tiles.each do |rt|
+      patch = Patch.new rt
+      set_patch(rt.x, rt.y, patch)
+    end
+  end
+
+  def initialize_with_test_data
+    self.height = options[:height]
+    self.width = options[:width]
+    self.current_date = Date.new
 
     self.patches = Array.new(width) { Array.new(height) }
 
@@ -44,7 +96,6 @@ class World
         patch = Patch.new
         patch.land_cover_class = :deciduous
         patch.vole_population = patch.max_vole_pop
-        patch.site_index = 80
         patch.x, patch.y = x, y
         set_patch(x, y, patch)
       end
@@ -165,29 +216,5 @@ class World
     canvas.save full_path
   end
 
-  def self.import(filename)
-    csv_rows = []
-    CSV.foreach(filename) { |row| csv_rows << row }
-    headers = csv_rows.shift
-    x_pos = headers.index('ROW')
-    y_pos = headers.index('COL')
-    land_cover_pos = headers.index('LANDCOV2006')
 
-    width  = csv_rows.collect{|row| row[x_pos].to_i}.max + 1
-    height = csv_rows.collect{|row| row[y_pos].to_i}.max + 1
-
-    world = self.new(width: width, height: height)
-
-    csv_rows.each do |csv_row|
-      x = csv_row[x_pos].to_i
-      y = csv_row[y_pos].to_i
-      cover_code = csv_row[land_cover_pos].to_i
-      patch = world.patch(x,y)
-      patch.land_cover_from_code cover_code
-    end
-
-    puts world.all_patches.collect{|patch| patch.land_cover_class }.uniq.inspect
-
-    world
-  end
 end

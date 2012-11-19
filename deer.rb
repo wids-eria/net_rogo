@@ -13,17 +13,17 @@ class Deer < Agent
   attr_accessor :suitable_neighborhood_selection_count, :backtrack_count
   attr_accessor :movement_rate, :active_hours
 
-def initialize
-  super
-  self.spawned = false
-  self.energy = 0
-  self.age = 0
-  self.location = [0.0, 0.0]
-  self.heading = 0.0
-  self.max_energy = MAX_ENERGY
+  def initialize
+    super
+    self.spawned = false
+    self.energy = 0
+    self.age = 0
+    self.location = [0.0, 0.0]
+    self.heading = 0.0
+    self.max_energy = MAX_ENERGY
 
-  self.color = Color::HSL.new(rand * 360, 100, 30)
- end
+    self.color = Color::HSL.new(rand * 360, 100, 30)
+  end
 
   def self.spawn_population(world, count = 10)
     patches_for_spawning = world.all_patches.select{|patch| can_spawn_on? patch}
