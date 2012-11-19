@@ -336,6 +336,7 @@ class Marten
 
 
   def die
+    puts " Marten #{self.id} has died :-( "
     output_stats
 
     world.martens.delete self

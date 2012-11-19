@@ -7,7 +7,6 @@ ActiveRecord::Base.establish_connection dbconfig["development"]
 
 module DatabaseSync
   def self.included(base)
-    puts "DatabaseSync INCLUDED!"
     base.extend ClassMethods
   end
   

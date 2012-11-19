@@ -76,6 +76,7 @@ TURN_STANDARD_DEVIATION = 30
   end
 
   def reproduce
+    puts "makin a baby!"
     if rand > 0.5
       FemaleMarten.spawn_at(self.world, self.x, self.y)
     else 

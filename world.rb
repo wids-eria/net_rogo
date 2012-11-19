@@ -89,6 +89,8 @@ class World
     db_male_martens = DBBindings::MaleMarten.where(:world_id => db_world.id)
     db_female_martens = DBBindings::FemaleMarten.where(:world_id => db_world.id)
     
+    puts "\tfound #{db_male_martens.count} male and #{db_female_martens.count} female martens"
+    
     db_male_martens.each do |db_male_marten|
       marten = MaleMarten.spawn_at(self, db_male_marten.x, db_male_marten.y)
       marten.age = 730
@@ -98,8 +100,6 @@ class World
       marten = FemaleMarten.spawn_at(self, db_female_marten.x, db_female_marten.y)
       marten.age = 730
     end
-    
-    
   end
 
   def initialize_with_test_data
