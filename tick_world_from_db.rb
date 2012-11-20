@@ -66,9 +66,15 @@ ActiveRecord::Base.transaction do
   
   puts "\tSaving patch info"
   #write out patch info (for voles at this point)
+  ProgressBar.color_status
+  ProgressBar.iter_rate_mode
+  bar = ProgressBar.new 'patches', world.width * world.height 
   world.all_patches.each do |patch|
     patch.sync_to_db
+    bar.inc
   end
+  bar.finish
+  
 end
 
 #result = RubyProf.stop

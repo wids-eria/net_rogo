@@ -1,6 +1,8 @@
 require 'date'
 require 'csv'
 require 'fileutils'
+require 'progressbar'
+
 
 module Enumerable
 
@@ -77,13 +79,22 @@ class World
     self.sync_from_db
     
     self.current_date = Date.new(db_world.year_current)
-    
+
     #load in tiles
     self.patches = Array.new(width) { Array.new(height) }
-    db_world.resource_tiles.each do |rt|
-      patch = Patch.new rt
-      set_patch(rt.x, rt.y, patch)
+    
+    ProgressBar.color_status
+    ProgressBar.iter_rate_mode
+    bar = ProgressBar.new 'patches', db_world.resource_tiles.count 
+    
+    db_world.resource_tiles.find_in_batches do |group|
+      group.each do |rt|
+        patch = Patch.new rt
+        set_patch(rt.x, rt.y, patch)
+        bar.inc
+      end
     end
+    bar.finish
     
     #load in martens
     db_male_martens = DBBindings::MaleMarten.where(:world_id => db_world.id)
@@ -128,6 +139,7 @@ class World
     martens.each(&:tick)
     deers.each(&:tick)
     all_patches.each(&:tick)
+    to_png
     self.current_date += 1.day
     self.tick_count += 1
     output_stats

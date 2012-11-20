@@ -29,22 +29,17 @@ if (db_male_martens.count == 0) or (db_female_martens.count == 0) #ok, let's spa
   puts "We need to make some martens!"
   
   How_many_martens = (10.0/(128*128) * db_world.width * db_world.height * 0.5).ceil # Steve estimates 10 for an eagle-sized area. We cut in half so we can do this many males and females
-  world = World.import_from_db(db_world)
   if db_male_martens.count == 0
-    puts "\tMaking #{How_many_martens} males"
-    spawned_martens = MaleMarten.spawn_population world, How_many_martens
-    spawned_martens.each do |marten|
-      db_marten = DBBindings::MaleMarten.new :world_id => db_world.id, :x => marten.x, :y => marten.y, :age => 730
-      db_marten.save!
+    resource_tiles = db_world.resource_tiles.where(:landcover_class_code => 42).order("RAND()").limit(10)
+    resource_tiles.each do |rt|
+      db_marten = DBBindings::MaleMarten.new :world_id => db_world.id, :x => rt.x, :y => rt.y, :age => 730
     end
   end
 
   if db_female_martens.count == 0
-    puts "\tMaking #{How_many_martens} females"
-    spawned_martens = FemaleMarten.spawn_population world, How_many_martens
-    spawned_martens.each do |marten|
-      db_marten = DBBindings::FemaleMarten.new :world_id => db_world.id, :x => marten.x, :y => marten.y, :age => 730
-      db_marten.save!
+    resource_tiles = db_world.resource_tiles.where(:landcover_class_code => 42).order("RAND()").limit(10)
+    resource_tiles.each do |rt|
+      db_marten = DBBindings::FemaleMarten.new :world_id => db_world.id, :x => rt.x, :y => rt.y, :age => 730
     end
   end
 end
