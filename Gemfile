@@ -7,13 +7,5 @@ gem 'color'
 gem 'simple-random'
 
 gem 'activerecord'
-
-
-platforms :jruby do
-  gem 'activerecord-jdbcmysql-adapter'
-end
-
-platforms :ruby do
-  gem 'mysql2'
-  gem 'ruby-prof'
-end
+gem 'mysql2'
+gem 'ruby-prof'

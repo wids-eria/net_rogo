@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../world'
 require File.dirname(__FILE__) + '/../patch'
 
 describe World do
-  let(:world) { World.new width: 30, height: 30 }
+  let(:world) { World.new(width: 30, height: 30).initialize_with_test_data }
   it 'returns the patch at x 1, y 5' do
     patch = world.patch(1,5)
     patch.x.should == 1

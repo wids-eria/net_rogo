@@ -67,7 +67,9 @@ class World
     world
   end
 
-  def initialize
+  def initialize(options = {})
+    self.height = options[:height]
+    self.width = options[:width]
     self.martens = []
     self.deers = []
     self.tick_count = 0
@@ -111,11 +113,10 @@ class World
       marten = FemaleMarten.spawn_at(self, db_female_marten.x, db_female_marten.y)
       marten.age = 730
     end
+    self
   end
 
-  def initialize_with_test_data
-    self.height = options[:height]
-    self.width = options[:width]
+  def initialize_with_test_data(options = {})
     self.current_date = Date.new
 
     self.patches = Array.new(width) { Array.new(height) }
@@ -129,6 +130,7 @@ class World
         set_patch(x, y, patch)
       end
     end
+    self
   end
 
   def all_patches
