@@ -165,8 +165,6 @@ class Marten
     self.class.passable? patch
   end
 
-<<<<<<< HEAD
-=======
 
   def move_one_patch
     target = patch_ahead 1
@@ -199,7 +197,6 @@ class Marten
   end
 
 
->>>>>>> origin/deers
   def self.can_spawn_on?(patch)
     self.passable?(patch) && self.habitat_suitability_for(patch) == 1
   end

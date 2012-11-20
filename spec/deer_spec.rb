@@ -3,7 +3,7 @@ require File.dirname(__FILE__) + '/../female_deer'
 
 describe MaleDeer do
   context "big happy family" do
-  let!(:world) { World.new width: 300, height: 300 }
+  let!(:world) { World.new(width: 300, height: 300).initialize_with_test_data }
   let!(:male_deers) { MaleDeer.spawn_population world, 2 }
   let(:male_deer) { male_deers.first }
   let(:male_deer_2) { male_deers[1] }
@@ -93,7 +93,7 @@ describe MaleDeer do
 
 
   describe 'evaluate neighborhood for forage' do
-    let!(:world) { World.new width: 3, height: 3}
+    let!(:world) { World.new(width: 3, height: 3).initialize_with_test_data}
     let(:young_coniferous) { Patch.new }
     let(:medium_coniferous) { Patch.new }
      let(:old_coniferous) { Patch.new }
@@ -340,7 +340,7 @@ describe MaleDeer do
 
 
   describe '#evaluate_neighborhood_for_forage in summer' do
-    let!(:world) { World.new width: 3, height: 3}
+    let!(:world) { World.new(width: 3, height: 3).initialize_with_test_data}
     let(:happy_little_patch) { Patch.new }
 
     before do
@@ -381,7 +381,7 @@ describe MaleDeer do
   end
 
   describe 'mating' do
-    let!(:world) { World.new width: 1, height: 1}
+    let!(:world) { World.new(width: 1, height: 1).initialize_with_test_data}
     let!(:male_deer)   { MaleDeer.spawn_population(world, 1).first }
     let!(:female_deer) { FemaleDeer.spawn_population(world, 1).first }
 

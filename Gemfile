@@ -7,4 +7,6 @@ gem 'chunky_png'
 gem 'color'
 gem 'simple-random'
 gem "pry"
+gem "activerecord"
+gem "mysql2"
 # add metric fu

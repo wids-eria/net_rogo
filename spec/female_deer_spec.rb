@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../female_deer'
 
 describe FemaleDeer do
-  let!(:world) { World.new width: 3, height: 3 }
+  let!(:world) { World.new(width: 3, height: 3).initialize_with_test_data }
   let!(:female_deer) { FemaleDeer.spawn_population(world, 1).first }
 
   it 'starts off with certain parameters' do
