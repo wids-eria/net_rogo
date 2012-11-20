@@ -1,7 +1,7 @@
 require File.dirname(__FILE__) + '/../female_marten'
 
 describe FemaleMarten do
-  let!(:world) { World.new width: 300, height: 300 }
+  let!(:world) { World.new(width: 300, height: 300).initialize_with_test_data }
   let(:martens) { FemaleMarten.spawn_population world, 10 }
   let(:female_marten) { martens.first }
 

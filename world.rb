@@ -106,12 +106,12 @@ class World
     
     db_male_martens.each do |db_male_marten|
       marten = MaleMarten.spawn_at(self, db_male_marten.x, db_male_marten.y)
-      marten.age = 730
+      marten.age = db_male_marten.age
     end
     
     db_female_martens.each do |db_female_marten|
       marten = FemaleMarten.spawn_at(self, db_female_marten.x, db_female_marten.y)
-      marten.age = 730
+      marten.age = db_female_marten.age
     end
     self
   end

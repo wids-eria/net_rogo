@@ -33,6 +33,7 @@ if (db_male_martens.count == 0) or (db_female_martens.count == 0) #ok, let's spa
     resource_tiles = db_world.resource_tiles.where(:landcover_class_code => 42).order("RAND()").limit(10)
     resource_tiles.each do |rt|
       db_marten = DBBindings::MaleMarten.new :world_id => db_world.id, :x => rt.x, :y => rt.y, :age => 730
+      db_marten.save!
     end
   end
 
@@ -40,6 +41,7 @@ if (db_male_martens.count == 0) or (db_female_martens.count == 0) #ok, let's spa
     resource_tiles = db_world.resource_tiles.where(:landcover_class_code => 42).order("RAND()").limit(10)
     resource_tiles.each do |rt|
       db_marten = DBBindings::FemaleMarten.new :world_id => db_world.id, :x => rt.x, :y => rt.y, :age => 730
+      db_marten.save!
     end
   end
 end
