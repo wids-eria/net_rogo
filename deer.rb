@@ -1,29 +1,34 @@
 require File.dirname(__FILE__) + '/agent'
+require File.dirname(__FILE__) + '/deer_landscape_functions'
+
 #require 'logger'
 
 $log = Logger.new("deer_events.log")
 
 class Deer < Agent
 
+  include DeerLandscapeFunctions
+
   MAX_ENERGY = 100
+  MAXIMUM_AGE = 5475 # 15 years?
 
  # NEED TO ADD PERSISTENT VARIABLES:
+  attr_accessor :world
   attr_accessor :age, :energy, :previous_location, :heading, :spawned, :max_energy, :color
   attr_accessor :random_walk_suitable_count, :random_walk_unsuitable_count
   attr_accessor :suitable_neighborhood_selection_count, :backtrack_count
-  attr_accessor :movement_rate, :active_hours
+  attr_accessor :movement_rate
 
-  def initialize
-    super
-    self.spawned = false
-    self.energy = 0
-    self.age = 0
-    self.location = [0.0, 0.0]
-    self.heading = 0.0
-    self.max_energy = MAX_ENERGY
+def initialize
+  super
+  self.spawned = false
+  self.energy = 0
+  self.age = 0
+  self.heading = 0.0
+  self.max_energy = MAX_ENERGY
 
-    self.color = Color::HSL.new(rand * 360, 100, 30)
-  end
+  self.color = Color::HSL.new(rand * 360, 100, 30)
+ end
 
   def self.spawn_population(world, count = 10)
     patches_for_spawning = world.all_patches.select{|patch| can_spawn_on? patch}
@@ -37,9 +42,9 @@ class Deer < Agent
   def self.spawn_at(world,x,y)
 
     deer = self.new
-    deer.location = [x,y]
-
     deer.world = world
+
+    deer.location = [x,y]
     world.deers << deer
 
     deer.energy = deer.max_energy
@@ -51,23 +56,23 @@ class Deer < Agent
     spawned.nil? || !spawned
   end
 
-  HABITAT_ATTRIBUTES = { open_water:                  {suitability: -1, forest_type_index: 0, visibility: 0},
-                         developed_open_space:        {suitability: 1,  forest_type_index: 0, visibility: 2},
-                         developed_low_intensity:     {suitability: 1,  forest_type_index: 0, visibility: 1},
-                         developed_medium_intensity:  {suitability: 0,  forest_type_index: 0, visibility: 1},
-                         developed_high_intensity:    {suitability: 0,  forest_type_index: 0, visibility: 1},
-                         barren:                      {suitability: 0,  forest_type_index: 0, visibility: 2},
-                         deciduous:                   {suitability: 1,  forest_type_index: 0, visibility: 1},
-                         coniferous:                  {suitability: 1,  forest_type_index: 1, visibility: 1},
-                         mixed:                       {suitability: 1,  forest_type_index: 0.5, visibility: 1},
-                         dwarf_scrub:                 {suitability: 1,  forest_type_index: 0, visibility: 2},
-                         shrub_scrub:                 {suitability: 1,  forest_type_index: 0, visibility: 2},
-                         grassland_herbaceous:        {suitability: 1,  forest_type_index: 0, visibility: 2},
-                         pasture_hay:                 {suitability: 1,  forest_type_index: 0, visibility: 2},
-                         cultivated_crops:            {suitability: 1,  forest_type_index: 0, visibility: 1},
-                         forested_wetland:            {suitability: 1,  forest_type_index: 0, visibility: 1},
-                         emergent_herbaceous_wetland: {suitability: 1,  forest_type_index: 0, visibility: 2},
-                         excluded:                    {suitability: -1, forest_type_index: 0, visibility: 0}}
+  HABITAT_ATTRIBUTES = { open_water:                  {suitability: -1, forest_type_index: 0, visibility: 0, forest: 0},
+                         developed_open_space:        {suitability: 1,  forest_type_index: 0, visibility: 2, forest: 0},
+                         developed_low_intensity:     {suitability: 1,  forest_type_index: 0, visibility: 1, forest: 0},
+                         developed_medium_intensity:  {suitability: 0,  forest_type_index: 0, visibility: 1, forest: 0},
+                         developed_high_intensity:    {suitability: 0,  forest_type_index: 0, visibility: 1, forest: 0},
+                         barren:                      {suitability: 0,  forest_type_index: 0, visibility: 2, forest: 0},
+                         deciduous:                   {suitability: 1,  forest_type_index: 0, visibility: 1, forest: 1},
+                         coniferous:                  {suitability: 1,  forest_type_index: 1, visibility: 1, forest: 1},
+                         mixed:                       {suitability: 1,  forest_type_index: 0.5, visibility: 1, forest: 1},
+                         dwarf_scrub:                 {suitability: 1,  forest_type_index: 0, visibility: 2, forest: 0},
+                         shrub_scrub:                 {suitability: 1,  forest_type_index: 0, visibility: 2, forest: 0},
+                         grassland_herbaceous:        {suitability: 1,  forest_type_index: 0, visibility: 2, forest: 0},
+                         pasture_hay:                 {suitability: 1,  forest_type_index: 0, visibility: 2, forest: 0},
+                         cultivated_crops:            {suitability: 1,  forest_type_index: 0, visibility: 1, forest: 0},
+                         forested_wetland:            {suitability: 1,  forest_type_index: 0, visibility: 1, forest: 1},
+                         emergent_herbaceous_wetland: {suitability: 1,  forest_type_index: 0, visibility: 2, forest: 0},
+                         excluded:                    {suitability: -1, forest_type_index: 0, visibility: 0, forest: 0}}
 
 
   def tick
@@ -77,33 +82,15 @@ class Deer < Agent
 
 
   def go
-    set_movement_rate
-    # puts world.day_of_year
     move
-    bed
+    # TODO bed
     mature
-    # check_birth
     check_death
   end
 
-  def set_movement_rate
-   self.movement_rate = 6
-   #if rut?
-   #  movement_rate = 6.5
-   #elsif spring_summer?
-
-   #else
-   #  # Default to fall_winter
-   #  movement_rate = 6
-   #  #  raise Error, 'Current day of year is outside defined season ranges for deer (calculating movement rate)'
-   #end
-  end
-
-
-
-
 
   def bed
+    raise 'define bed'
     if rut?
     elsif spring_summer?
     else
@@ -112,34 +99,66 @@ class Deer < Agent
     end
   end
 
+  def move_to_cover
+    raise 'calling empty method'
+    # evaluate_steps; permits longer term decision analysis
+    # target = evaluate_neighborhood_for_bedding(neighborhood_in_radius(1))
+    # self.location = [target.x, target.y]
+  end
+
+  def evaluate_neighborhood_for_bedding(patchset)
+    patchset.sort { |x, y| assess_bedding_potential(x) <=> assess_bedding_potential(y) }
+  end
+
 
   def evaluate_neighborhood_for_forage
-    # assess local neighborhood during foraging
+    neighborhood = neighborhood_in_radius(1)
+    target = patch_with_highest_score(neighborhood)
   end
 
-
-  def move_to_cover
-    # evaluate_steps; permits longer term decision analysis
+  def move_to_patch_center patch
+    self.location = [(patch.x + 0.5), (patch.y + 0.5)]
   end
 
-
-  def evaluate_neighborhood_for_bedding
+  def patch_with_highest_score(patch_set)
+    if spring_summer?
+      if self.energy > 100
+        random_patch = patch_set.shuffle[0]
+        if self.passable?(random_patch)
+          return_value = [random_patch, assess_spring_summer_food_potential(random_patch)]
+        else
+          sorted_patches = patch_set.shuffle.sort { |y, x| assess_spring_summer_food_potential(x) <=> assess_spring_summer_food_potential(y) }
+          return_value = [sorted_patches[0], assess_spring_summer_food_potential(sorted_patches[0])]
+        end
+      else
+        sorted_patches = patch_set.shuffle.sort { |y, x| assess_spring_summer_food_potential(x) <=> assess_spring_summer_food_potential(y) }
+        return_value = [sorted_patches[0], assess_spring_summer_food_potential(sorted_patches[0])]
+      end
+    else
+      if self.energy > 100
+        random_patch = patch_set.shuffle[0]
+        if self.passable?(random_patch)
+          return_value = [random_patch, assess_fall_winter_food_potential(random_patch)]
+        else
+          sorted_patches = patch_set.shuffle.sort { |y, x| assess_fall_winter_food_potential(x) <=> assess_fall_winter_food_potential(y) }
+          return_value = [sorted_patches[0], assess_fall_winter_food_potential(sorted_patches[0])]
+        end
+      else
+        sorted_patches = patch_set.shuffle.sort { |y, x| assess_fall_winter_food_potential(x) <=> assess_fall_winter_food_potential(y) }
+        return_value = [sorted_patches[0], assess_fall_winter_food_potential(sorted_patches[0])]
+      end
+    end
+  return_value
   end
 
 
   def eat
-    
+    if spring_summer?
+      self.energy += 3 # baseless approximation of consumption
+    else
+      self.energy += 2 
+    end
   end
-
-
-  def mature
-  end
-
-
-  def check_death
-  end
-
-
 
 
   def rut?
@@ -147,42 +166,97 @@ class Deer < Agent
     (268..309).include? world.day_of_year
   end
 
+
   def spring_summer?
     (79..264).include? world.day_of_year
   end
 
+
   # def fall_winter?
   #   if (265..267).include? world.day_of_year || (310..365).include? world.day_of_year || (0..78).include? world.day_of_year
   # end
-    
+
+
   def self.habitat_suitability_for(patch)
     HABITAT_ATTRIBUTES[patch.land_cover_class][:suitability]
   end
+
 
   def habitat_suitability_for(patch)
     self.class.habitat_suitability_for patch
   end
 
+
   def self.can_spawn_on?(patch)
     self.passable?(patch) && self.habitat_suitability_for(patch) == 1
   end
- 
+
+
   def self.passable?(patch)
-    !patch.nil? && habitat_suitability_for(patch) != -1 
+    !patch.nil? && habitat_suitability_for(patch) != -1
   end
+
 
   def passable?(patch)
     self.class.passable? patch
   end
 
 
-  def evaluate_steps
-    immediate_neighborhood = neigborhood_in_radius 1
-    first_order_steps = immediate_neighborhood.collect
-    HABITAT_ATTRIBUTES[patch.land_cover_class][:suitability]
-    HABITAT_ATTRIBUTES[patch.land_cover_class][:visibility]
+  def mature
+    self.age += 1
   end
 
-  def execute_move_sequence
+
+  def check_death
+    if die_from_mortality_trial? || die_from_old_age?
+      world.deers.delete self
+    end
+    if energy < 0
+      world.deers.delete self
+    end
   end
+
+
+  def die_from_mortality_trial?
+    rand > mortality_probability
+  end
+
+
+  def die_from_old_age?
+    self.age > MAXIMUM_AGE
+  end
+
+  
+  def mortality_probability
+    if self.patch.land_cover_class == :developed_low_intensity
+      ((rand * 0.20) + 0.62) ** (1.0 / 365)
+    else
+     ((rand * 0.19) + 0.57) ** (1.0 / 365)
+    end
+  end
+
+
+  def active_hours
+    if rut?
+      12
+    elsif spring_summer?
+      8
+    else
+      6
+      # Default to fall_winter behavior
+      # raise ArgumentError, 'Current activity level is outside defined season ranges for deer'
+    end
+  end
+
+
+  def move_to_forage_patch_and_eat
+    target = evaluate_neighborhood_for_forage
+    move_to_patch_center target[0]
+    #puts "food index of target is #{target[1]}"
+    #puts "location of target is #{target[0].location}"
+    if target[1] > 0.5 # Random estimate of what would be a good score
+      eat
+    end
+  end
+
 end

@@ -3,6 +3,11 @@ require File.dirname(__FILE__) + '/db_connector'
 require File.dirname(__FILE__) + '/db_models/resource_tile'
 
 class Patch
+
+  def to_s
+    "#<#{self.class.name}:#{self.object_id} x:#{self.x}, y:#{self.y}, land_cover_class:#{self.land_cover_class}, agents:#{self.agents.size}>"
+  end
+  
   require File.dirname(__FILE__) + '/deer_landscape_functions'
   include DeerLandscapeFunctions
   
@@ -18,6 +23,7 @@ class Patch
   
   include DatabaseSync
   sync_fields :x, :y, :vole_population
+  attr_accessor :basal_area
 
   MAX_VOLE_POP = 13.9
   UNHINDERED_VOLE_GROWTH_RATE = 0.00344
@@ -65,6 +71,7 @@ class Patch
     self.deer_thermal_cover = 0
     self.site_index = 80
 
+    self.basal_area = (rand) * 150
     @agents = Set.new
 
     if resource_tile
@@ -78,7 +85,7 @@ class Patch
   end
 
   def add_agent(agent)
-    @agents<<agent unless agents.member? agent
+    @agents << agent unless agents.member? agent
   end
   
   def remove_agent(agent)
@@ -92,7 +99,6 @@ class Patch
   def tick
     age_and_expire_scents
     grow_voles
-    calculate_deer_metrics
   end
 
   def location
@@ -116,29 +122,27 @@ class Patch
     end
   end
 
+
   def grow_voles
     density_dependent_growth_delta = daily_growth_delta * (1 - (self.vole_population/self.max_vole_pop))
     self.vole_population = self.vole_population + density_dependent_growth_delta * self.vole_population
   end
 
+
   def daily_growth_delta
     UNHINDERED_VOLE_GROWTH_RATE
   end
+
 
   def calculate_deer_food_base
     # TODO: use indexes to determine potential, and logistic growth - deer removal to indicate current food amounts
   end
 
-  def calculate_deer_metrics
-    # TODO: these indices only needs to be updated once per year
-    self.deer_thermal_cover = self.assess_thermal_cover
-    self.deer_spring_summer_food = self.assess_spring_summer_food_potential
-    self.deer_fall_winter_food = self.assess_fall_winter_food_potential
-  end
 
   def land_cover_from_code(code)
     self.land_cover_class = LAND_COVER_CLASSES[code] || raise("unknown code #{code}")
   end
+
 
   def color
     COLORS[self.land_cover_class] || raise("#{self.land_cover_class} needs color")

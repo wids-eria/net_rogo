@@ -1,59 +1,142 @@
 require File.dirname(__FILE__) + '/deer'
+require File.dirname(__FILE__) + '/female_deer'
+require 'pry'
 
 class MaleDeer < Deer
 #TODO: set active_hours and movement_rates according to time of year or reproductive phase
 
-  def move 
-    set_active_hours
+  BASE_HOURLY_METABOLIC_RATE = 1 # one hours caloric cost
+  MIN_REPRODUCTIVE_ENERGY = 10
+  attr_accessor :min_male_reproductive_energy
+
+  def move
     t = 0
     while t < self.active_hours
+      metabolize_hourly
+      t = t + 1
       if rut?
-        if individuals_in_radius?
-          t = t + 1
-        # if there are females right here
-          # if energy is not too low
-            # attempt to copulate
-              # if there are males to compete with
-                # male with greater energy wins rights, other moves on
-                # if won, attempt to mate
-                # if female receptive, female becomes pregnant
-            # t = t + 1
-          # elsif there are females within range
-            # move towards females
-            # eat
-            # t = t + (1 / rut_movement_rate)
+        # binding.pry
+        reproduction_target = select_best_reproduction_patch 
+        puts "location of reproduction target = #{reproduction_target[:patch].location}"
+        if reproduction_target[:female_count] > 0      # if females around
+          puts 'ladies detected'
+          self.location = reproduction_target[:patch].location
+          if reproduction_target[:male_count] > 0      # if males around
+            puts "number of males around = #{reproduction_target[:male_count]}"
+            jousting_partner = select_jousting_partner
+            puts "jousting_partner = #{jousting_partner.object_id}"
+            if self.energy > jousting_partner.energy # this is the fight right here
+              # implement additional energy cost for fighters
+              self.energy -= 0.25
+              jousting_partner.energy -= 0.25
+              if self.energy > MIN_REPRODUCTIVE_ENERGY
+                attempt_to_mate
+              else
+                eat
+              end
+            else
+              eat
+            end
+          else
+            if self.energy > MIN_REPRODUCTIVE_ENERGY
+              attempt_to_mate
+            else
+              eat
+            end
+          end
         else
-          # change location
-          evaluate_neighborhood_for_forage
-          eat
-          t = t + 1 
+          puts 'no ladies here!'
+          local_females = agents_in_radius_of_type(2, FemaleDeer)
+          local_females = local_females.select(&:estrus?)
+          if local_females.count > 0
+            local_females.shuffle.max_by(&:energy) # move towards one of females (preferably receptive ones)
+            self.location = [local_females[0].x, local_females[0].y]
+          else
+            move_to_forage_patch_and_eat
+          end
         end
       elsif spring_summer?
-        evaluate_neighborhood_for_forage
-        eat
-        t = t + 1
-      else 
-        evaluate_neighborhood_for_forage
-        eat
-        t = t + 1
+        move_to_forage_patch_and_eat
+      else # fall by default
+        move_to_forage_patch_and_eat
       # else
       #   raise ArgumentError, 'Current day of year is outside defined season ranges for deer (movement)'
       end
     end
-    evaluate_neighborhood_for_bedding
-    move_to_cover
+    evaluate_neighborhood_for_bedding(neighborhood_in_radius(1))
+    # move_to_cover
   end
 
-  def set_active_hours
-    if rut? 
-      self.active_hours = 12
-    elsif spring_summer?
-      self.active_hours = 8
-    else
-      self.active_hours = 6
-      # Default to fall_winter behavior
-      # raise ArgumentError, 'Current activity level is outside defined season ranges for deer'
+
+  def select_jousting_partner
+    local_deers = []
+    self.patch.agents.each do |deer|
+      if deer.kind_of? MaleDeer
+        local_deers << deer
+      end
     end
+    local_deers.max_by(&:energy)
   end
+
+
+  def select_best_reproduction_patch
+    neighborhood = world.patches_in_radius(self.x, self.y, 1) 
+    # identify location with highest fertile female : male ratio
+    # for each patch, count number of receptive females and number of males
+    count_data = find_male_female_counts(neighborhood)
+    count_data = count_data.shuffle.sort_by do |patch| 
+      if patch[:female_count] == 0 # if there are no females
+        0
+      else
+        -patch[:female_count].to_f / patch[:male_count].to_f
+      end
+    end
+    count_data[0]
+  end
+
+
+  def find_male_female_counts(neighborhood)
+    neighborhood_data = []
+    neighborhood.each do |patch| 
+      female_count = 0
+      male_count = 0
+      # count receptive females on patch
+      patch.agents.each do |agent|
+        if agent.kind_of? FemaleDeer
+          if agent.estrus?
+            female_count += 1
+          end
+        elsif agent.kind_of? MaleDeer
+          male_count += 1
+        end
+      end
+      neighborhood_data << {patch: patch, male_count: male_count, female_count: female_count}
+    end
+    neighborhood_data
+  end
+
+  def attempt_to_mate
+    potential_females = self.patch.agents.select{|agent| agent.kind_of?(FemaleDeer) && agent.estrus?}
+    return if potential_females.empty?
+
+    the_one = potential_females.shuffle.max_by(&:energy)
+    the_one.impregnate if succesfully_mated?
+  end
+
+  def succesfully_mated?
+    rand < 0.8
+  end
+
+
+  def hourly_metabolic_rate
+    modifier = 1
+    BASE_HOURLY_METABOLIC_RATE * modifier
+  end
+
+
+  def metabolize_hourly
+    self.energy -= hourly_metabolic_rate
+  end
+
 
 end

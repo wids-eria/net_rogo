@@ -95,6 +95,5 @@ TURN_STANDARD_DEVIATION = 30
   def leave_scent_mark
     # no scent
   end
-
 end
 

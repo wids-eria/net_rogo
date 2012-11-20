@@ -245,6 +245,20 @@ class World
       # draw heading here
     end
 
+
+      male_deer_color = ChunkyPNG::Color(139,69,19)
+      female_deer_color   = ChunkyPNG::Color(222,184,135)
+
+    deers.each do |deer|
+      if deer.kind_of? MaleDeer
+        canvas.circle(marten.x.to_i, marten.y.to_i, 1, male_deer_color)
+      else
+        canvas.circle(marten.x.to_i, marten.y.to_i, 1, female_deer_color)
+      end
+      # draw heading here
+    end
+
+
     canvas.save full_path
   end
 

@@ -10,7 +10,7 @@ describe MaleMarten do
   end
 
   it 'has mortality' do
-    puts 100.times.collect{(365*male_marten.active_hours*200).times.select{ male_marten.die_from_fatal_blows? }.count}.mean
+    puts 10.times.collect{(365*male_marten.active_hours*20).times.select{ male_marten.die_from_fatal_blows? }.count}.mean
   end
 
   it 'ticks' do
