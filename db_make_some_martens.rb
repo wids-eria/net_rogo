@@ -28,9 +28,10 @@ db_female_martens = DBBindings::FemaleMarten.where(:world_id => db_world.id)
 if (db_male_martens.count == 0) or (db_female_martens.count == 0) #ok, let's spawn a netrogo world
   puts "We need to make some martens!"
   
-  How_many_martens = (10.0/(128*128) * db_world.width * db_world.height * 0.5).ceil # Steve estimates 10 for an eagle-sized area. We cut in half so we can do this many males and females
+  How_many_martens = ((10.0/(128*128)) * db_world.width * db_world.height * 0.5).ceil # Steve estimates 10 for an eagle-sized area. We cut in half so we can do this many males and females
+  land_where_to_put_martens = [41, 42, 43, 90]
   if db_male_martens.count == 0
-    resource_tiles = db_world.resource_tiles.where(:landcover_class_code => 42).order("RAND()").limit(10)
+    resource_tiles = db_world.resource_tiles.where(:landcover_class_code => land_where_to_put_martens).order("RAND()").limit(How_many_martens)
     resource_tiles.each do |rt|
       db_marten = DBBindings::MaleMarten.new :world_id => db_world.id, :x => rt.x, :y => rt.y, :age => 730
       db_marten.save!
@@ -38,7 +39,7 @@ if (db_male_martens.count == 0) or (db_female_martens.count == 0) #ok, let's spa
   end
 
   if db_female_martens.count == 0
-    resource_tiles = db_world.resource_tiles.where(:landcover_class_code => 42).order("RAND()").limit(10)
+    resource_tiles = db_world.resource_tiles.where(:landcover_class_code => land_where_to_put_martens).order("RAND()").limit(How_many_martens)
     resource_tiles.each do |rt|
       db_marten = DBBindings::FemaleMarten.new :world_id => db_world.id, :x => rt.x, :y => rt.y, :age => 730
       db_marten.save!
@@ -47,7 +48,7 @@ if (db_male_martens.count == 0) or (db_female_martens.count == 0) #ok, let's spa
 end
 
 puts "Spawning voles into patches"
-class_codes_to_stick_voles_in = [31,41,42,43,52,71]
+class_codes_to_stick_voles_in = [41,42,43,52,71,90]
 tiles_that_need_voles = db_world.resource_tiles.where(:landcover_class_code => class_codes_to_stick_voles_in).where(:vole_population => 0)
 tiles_that_need_voles.update_all(:vole_population => Patch::MAX_VOLE_POP)
 

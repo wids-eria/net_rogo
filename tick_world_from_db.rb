@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'bundler/setup'
+GC.disable
 
 require File.dirname(__FILE__) + '/db_connector'
 require File.dirname(__FILE__) + '/db_models/world'
@@ -29,11 +30,18 @@ puts "\twidth = #{world.width}, height = #{world.height}"
 #world.to_png
 
 #RubyProf.start
+GC.enable
+GC.start
 
 ProgressBar.color_status
 ProgressBar.iter_rate_mode
-bar = ProgressBar.new 'ticks', 730 
-730.times{ world.tick; bar.inc } # world.to_png; 
+how_many_ticks = 200
+bar = ProgressBar.new 'ticks', how_many_ticks 
+how_many_ticks.times do 
+   world.tick
+   puts "Martens(#{world.martens.count}): #{world.martens.map { |m| m.energy}  }"
+   bar.inc 
+end
 bar.finish
 
 puts "Syncing state TO database"
@@ -50,13 +58,13 @@ ActiveRecord::Base.transaction do
   puts "\tSpawning #{world.martens.count} new DB Martens"
   #spawn new db martens
   world.martens.each do |marten|
-    klass = case marten.class
-    when MaleMarten
+    klass = case marten.class.to_s
+    when MaleMarten.to_s
       DBBindings::MaleMarten
-    when FemaleMarten
+    when FemaleMarten.to_s
       DBBindings::FemaleMarten
     else 
-      raise "unknown marten class to save out to"
+      raise "unknown marten class to save out to: #{marten.class}"
     end
     db_marten = klass.new :world_id => db_world.id, :x => marten.x, :y => marten.y, :age => marten.age
     db_marten.save!

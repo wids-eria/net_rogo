@@ -77,7 +77,7 @@ class Patch
     if resource_tile
       use_correspondent resource_tile
       sync_from_db
-      self.land_cover_class = resource_tile.land_cover_type
+      self.land_cover_class = resource_tile.land_cover_type.to_sym
     else
       self.land_cover_class = :barren
       self.vole_population = self.max_vole_pop

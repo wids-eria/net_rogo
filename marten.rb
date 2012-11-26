@@ -88,7 +88,7 @@ class Marten
                           grassland_herbaceous: 0,
                           pasture_hay: 0,
                           cultivated_crops: 0,
-                          forested_wetland: 0,
+                          forested_wetland: 1,
                           emergent_herbaceous_wetland: 0,
                           excluded: -1 }
 
@@ -342,7 +342,7 @@ class Marten
     rand > mortality_probability
   end
 
-  def mortality_probability
+  def mortality_probability #survival probability
     datums = {
       "MaleMarten" => {
         summer: [1,0.9965765],
@@ -355,6 +355,7 @@ class Marten
         kit_rearing: [0.9993278,0.9959066]
       }
     }
+    return 1
     if habitat_suitability_for(self.patch) == 1
       #return Math.exp(Math.log(0.99897) / self.active_hours) # based on daily predation rates decomposed to hourly rates (from Thompson and Colgan (1994))
       #return 0.99897**(1/self.active_hours)
