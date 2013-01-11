@@ -181,14 +181,16 @@ describe MaleMarten do
         context 'when selecting a forage patch' do
           before do
             male_marten.location = [1.5, 1.5]
-            male_marten.previous_location = [0.5, 0.5]
+            male_marten.previous_location = [0.7928932188134523, 0.7928932188134523]
             male_marten.heading = 45.degrees
           end
 
           it 'backtracks if no suitable patches' do
-            male_marten.stubs desireable_patches: []
+            male_marten.stubs desirable_patches: []
             male_marten.select_forage_patch_and_move
             male_marten.heading.should == 225.degrees
+            male_marten.location[0].should be_within(0.00001).of(0.7928932188134523)
+            male_marten.location[1].should be_within(0.00001).of(0.7928932188134523)
           end
 
           it 'goes to the tile with the largest vole population' do
@@ -198,14 +200,14 @@ describe MaleMarten do
             patch2 = world.patch(2,0)
             patch2.max_vole_pop = 20.0
 
-            male_marten.stubs desireable_patches: [patch2, patch1]
+            male_marten.stubs desirable_patches: [patch2, patch1]
 
             male_marten.select_forage_patch_and_move
             male_marten.heading.should == 45.degrees
           end
 
           it 'does nothing if no suitable tiles and previous location is current location' do
-            male_marten.stubs desireable_patches: []
+            male_marten.stubs desirable_patches: []
             male_marten.location = male_marten.previous_location = [1.5, 1.5]
 
             male_marten.select_forage_patch_and_move
