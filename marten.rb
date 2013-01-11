@@ -1,6 +1,7 @@
 require File.dirname(__FILE__) + '/patch'
 require File.dirname(__FILE__) + '/number'
 require File.dirname(__FILE__) + '/world'
+require File.dirname(__FILE__) + '/agent'
 require 'chunky_png'
 require 'color'
 require 'csv'
@@ -8,7 +9,7 @@ require 'logger'
 
 $log = Logger.new("marten_events.log")
 
-class Marten
+class Marten < Agent
 
   MAX_ENERGY = 3334.8
   BASE_PATCH_ENTRANCE_PROBABILITY = 0.03
@@ -20,21 +21,16 @@ class Marten
   # energy = max_energy # TODO: only during initialization
 
   # NEED TO ADD PERSISTENT VARIABLES:
-  attr_accessor :x, :y
-  attr_accessor :world
   attr_accessor :age, :energy, :previous_location, :heading, :spawned, :max_energy, :color
   attr_accessor :random_walk_suitable_count, :random_walk_unsuitable_count
   attr_accessor :suitable_neighborhood_selection_count, :backtrack_count
 
-  def id
-    object_id
-  end
 
   def initialize
+    super
     self.spawned = false
     self.energy = 0
     self.age = 0
-    self.location = [0.0, 0.0]
     self.heading = 0.0
     self.max_energy = MAX_ENERGY
 
@@ -60,10 +56,10 @@ class Marten
   def self.spawn_at(world,x,y)
 
     marten = self.new
+    marten.world = world
     marten.location = [x,y]
     marten.previous_location = [x,y]
 
-    marten.world = world
     world.martens << marten
 
     marten.energy = marten.max_energy
@@ -94,10 +90,6 @@ class Marten
                           excluded: -1 }
 
 
-  def day_of_year
-    world.day_of_year
-  end
-
   def stay_probability
     (1 - BASE_PATCH_ENTRANCE_PROBABILITY) * (self.energy / MAX_ENERGY)
   end
@@ -105,48 +97,6 @@ class Marten
 
   def should_leave?
     stay_probability < rand
-  end
-
-
-  def turn(degrees)
-    self.heading += degrees
-    self.heading %= 360
-  end
-
-
-  def face_patch(patch)
-    face_location [patch.center_x, patch.center_y]
-  end
-
-  def face_location(coordinates)
-    delta_x = coordinates[0] - self.x
-    delta_y = coordinates[1] - self.y
-    self.heading = Math::atan2(delta_y, delta_x).in_degrees % 360
-  end
-
-
-  def patch_ahead(distance)
-    patch_x = Math::cos(heading.in_radians) * distance + x
-    patch_y = Math::sin(heading.in_radians) * distance + y
-    world.patch patch_x, patch_y
-  end
-
-
-  def neighborhood_in_radius radius = 0
-    world.patches_in_radius(x, y, radius) - [self.patch]
-  end
-
-  def neighborhood
-    x = self.x.floor
-    y = self.y.floor
-    [ world.patch(x-1,y-1),
-      world.patch(x-1,y),
-      world.patch(x-1,y+1),
-      world.patch(x,y-1),
-      world.patch(x,y+1),
-      world.patch(x+1,y-1),
-      world.patch(x+1,y),
-      world.patch(x+1,y+1) ].compact
   end
 
 
@@ -203,32 +153,11 @@ class Marten
   end
   
 
-  def walk_forward(distance)
-    raise 'no previous location' if previous_location.nil?
-    self.x = Math::cos(heading.in_radians) * distance + x
-    self.y = Math::sin(heading.in_radians) * distance + y
-  end
-
-
-  def growing_season_range
-    80..355
-  end
-
-  def summer?
-    (197..319).include? day_of_year
-  end
-
-  def winter?
-    day_of_year > 319 || day_of_year < 75
-  end
 
   def kit_rearing?
     (75..196).include? day_of_year
   end
 
-  def growing_season?
-    growing_season_range.include? day_of_year
-  end
 
   def active_hours
     if growing_season?
@@ -242,20 +171,6 @@ class Marten
     active_hours.times do
       hourly_routine
     end
-  end
-
-
-  def location
-    [self.x, self.y]
-  end
-
-  def location=(coordinates)
-    self.x = coordinates[0]
-    self.y = coordinates[1]
-  end
-
-  def patch
-    world.patch(self.x, self.y)
   end
 
   def satiated?
