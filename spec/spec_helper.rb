@@ -1,3 +1,6 @@
+require 'simplecov'
+SimpleCov.start 'rails'
+
 RSpec.configure do |config|
   # Use color in STDOUT
   config.color_enabled = true
